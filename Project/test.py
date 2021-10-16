@@ -1,46 +1,50 @@
 import pygame
 from sys import exit
+from random import choice
 
-def obstacle_display(obstacle_list):
-    if obstacle_list:
-        for obstacle_rect in obstacle_list:
-            WIN.blit(fly_surf, obstacle_rect)
-        
-        return obstacle_list
-    else:
-        return []
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
 
-# def collision(player, obstacles)
+        if type == "fly":
+            fly_1 = pygame.image.load("assets/fly1.png").convert_alpha()
+            fly_2 = pygame.image.load("assets/fly2.png").convert_alpha()
+            self.frames = [fly_1, fly_2]
+
+        self.animation_index = 0
+        self.image = self.frames[self.animation_index]
+        self.rect = self.image.get_rect(center = (WIDTH/2, HEIGHT/2))
+
+    def animation_state(self):
+        self.animation_index += 0.1 
+        if self.animation_index >= len(self.frames): 
+            self.animation_index = 0
+        self.image = self.frames[int(self.animation_index)]
+	
+    def update(self):
+        self.animation_state()
+        # self.destroy()
+    
+    # def destroy(self):
+    #     if condition:
+    #         self.kill()
 
 pygame.init()
-WIDTH, HEIGHT = (900, 500)
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Time Crawlers")
-test_font = pygame.font.Font("font/Pixeltype.ttf", 50) # bring font file, px
-
 game_active = False
 
+WIDTH, HEIGHT = (900, 500)
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+FONT = pygame.font.Font("font/Pixeltype.ttf", 50) # bring font file, px
+
 bg_surf = pygame.transform.scale(pygame.image.load("assets/bg.png").convert(), (WIDTH, HEIGHT))
-
-fly_frame_1 = pygame.image.load("assets/fly1.png").convert_alpha()
-fly_frame_2 = pygame.image.load("assets/fly2.png").convert_alpha()
-fly_frames = [fly_frame_1, fly_frame_2]
-fly_frame_index = 0
-fly_surf = fly_frames[fly_frame_index]
-fly_animation_timer = pygame.USEREVENT + 2
-pygame.time.set_timer(fly_animation_timer, 200)
-
-obstacle_rect_list = []
+enemy_group = pygame.sprite.Group()
 
 def main(): # main function
     running = True
     FPS = 60
     clock = pygame.time.Clock()
     game_active = False
-    
-    global obstacle_rect_list
-    global fly_frame_index
-    global fly_surf
         
     while running:
         for event in pygame.event.get():
@@ -51,26 +55,16 @@ def main(): # main function
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
             
-            if event.type == fly_animation_timer:
-                if fly_frame_index == 0: 
-                    fly_frame_index = 1
-                else:
-                    fly_frame_index = 0
-                fly_surf = fly_frames[fly_frame_index]
-        
+            if game_active:
+                if (len(enemy_group) == 0):
+                    enemy_group.add(Enemy(choice(["fly"])))
+
         if game_active:
-            WIN.blit(bg_surf, (0, 0))
-            if (len(obstacle_rect_list) == 0):
-                obstacle_rect_list.append(fly_surf.get_rect(center=(WIDTH/2, HEIGHT/2)))
-            else:
-                print(obstacle_rect_list)
-
-            # OBSTACLE DISPLAY
-            obstacle_rect_list = obstacle_display(obstacle_rect_list)
-
+            WIN.blit(bg_surf, (0, 0))            
+            enemy_group.draw(WIN)
+            enemy_group.update()
         else: 
-            WIN.blit(bg_surf, (0, 0))
-            game_message = test_font.render("Press [Space] to spawn an enemy", False, (255, 255, 255))
+            game_message = FONT.render("Press [Space] to spawn an enemy", False, (255, 255, 255))
             game_message_rect = game_message.get_rect(center=(WIDTH/2, HEIGHT/2))
             WIN.blit(game_message, game_message_rect)
 
