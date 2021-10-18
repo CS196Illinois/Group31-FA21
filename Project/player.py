@@ -1,10 +1,15 @@
+import pygame
+
 class player(pygame.sprite.Sprite):
 
     def __init__(self): #
-        super(Player, self).__init__()
-        self.surf = pygame.Surface((75, 25))
-        self.surf.fill((255, 255, 255))
-        self.rect = self.surf.get_rect()
+        super().__init__()
+        self.image = pygame.image.load("temporaryPlayerSprite.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = 300
+        self.rect.y = 300
+        self.VELOCITY = 5
+        self.DIRECTION = "RIGHT"
 
-    def move(self, keys_pressed):
-        if ()
+    def move():
+        keys_pressed = pygame.key.get_pressed()
