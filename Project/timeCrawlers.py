@@ -10,8 +10,6 @@ FPS = 60
 
 WHITE = (255, 255, 255)
 
-mx, my = pygame.mouse.get_pos()
-
 def draw_window(player): # draw and update the window
     WIN.fill(WHITE)
     WIN.blit(player.image, (player.rect.x, player.rect.y))
@@ -24,13 +22,15 @@ def main(): # main function
 
     while run:
         clock.tick(FPS)
+        mx, my = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 p.attack()
 
-        p.move()
+        p.handle_movement()
         draw_window(p)
 
     pygame.quit()

@@ -1,4 +1,5 @@
 import pygame
+import os
 
 class player(pygame.sprite.Sprite):
 
@@ -13,7 +14,7 @@ class player(pygame.sprite.Sprite):
         self.weapons = ["sword", "shotgun", "sniper"]
         self.equippedWeapon = "sword"
 
-    def move(self):
+    def handle_movement(self):
         keys_pressed = pygame.key.get_pressed()
         if keys_pressed[pygame.K_w]:
             self.rect.y -= self.VELOCITY
