@@ -2,7 +2,7 @@
 import pygame as pg
 import sys
 from setting import *
-#from enermy import *
+from sprites import *
 
 class Game:
     def __init__(self):
