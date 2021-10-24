@@ -5,11 +5,12 @@ class player(pygame.sprite.Sprite):
 
     def __init__(self): #
         super().__init__()
-        self.image = pygame.image.load("C:/Users/benja/github/Group31-FA21/Project/temporaryPlayerSprite.png")
+        self.image = pygame.image.load("temporaryPlayerSprite.png")
         self.rect = self.image.get_rect()
         self.rect.x = 300
         self.rect.y = 300
         self.VELOCITY = 8
+        player.HEALTH = 3
         self.DIRECTION = "RIGHT"
         self.weapons = ["sword", "shotgun", "sniper"]
         self.equippedWeapon = "sword"
