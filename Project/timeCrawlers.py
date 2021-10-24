@@ -1,5 +1,5 @@
 import pygame
-from Player import player
+from player import player
 
 # constants
 WIDTH, HEIGHT = (900, 500)
@@ -9,6 +9,8 @@ pygame.display.set_caption("Time Crawlers")
 FPS = 60
 
 WHITE = (255, 255, 255)
+
+mx, my = pygame.mouse.get_pos()
 
 def draw_window(player): # draw and update the window
     WIN.fill(WHITE)
@@ -25,6 +27,9 @@ def main(): # main function
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                p.attack()
+
         p.move()
         draw_window(p)
 

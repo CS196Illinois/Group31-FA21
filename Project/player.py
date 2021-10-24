@@ -10,6 +10,8 @@ class player(pygame.sprite.Sprite):
         self.rect.y = 300
         self.VELOCITY = 8
         self.DIRECTION = "RIGHT"
+        self.weapons = ["sword", "shotgun", "sniper"]
+        self.equippedWeapon = "sword"
 
     def move(self):
         keys_pressed = pygame.key.get_pressed()
@@ -21,3 +23,6 @@ class player(pygame.sprite.Sprite):
             self.rect.y += self.VELOCITY
         if keys_pressed[pygame.K_d]:
             self.rect.x += self.VELOCITY
+
+    def attack(self):
+        print("hello")
