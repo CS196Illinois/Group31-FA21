@@ -1,24 +1,32 @@
 import pygame
+from Player import player
 
 # constants
 WIDTH, HEIGHT = (900, 500)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Time Crawlers")
 
+FPS = 60
+
 WHITE = (255, 255, 255)
 
-def draw_window(): # draw and update the window
+def draw_window(player): # draw and update the window
     WIN.fill(WHITE)
+    WIN.blit(player.image, (player.rect.x, player.rect.y))
     pygame.display.update()
 
 def main(): # main function
+    clock = pygame.time.Clock()
+    p = player()
     run = True
+
     while run:
+        clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
-        draw_window()
+        p.move()
+        draw_window(p)
 
     pygame.quit()
 
