@@ -21,8 +21,14 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.player = Player(self, 10, 10)
-        for x in range(10, 20):
-            Wall(self, x, 5)
+        for x in range(0, 100):
+            Wall(self, x, 0)
+        for xd in range(0, 100):
+            Wall(self, xd, 23)
+        for y in range(0, 100):
+            Wall(self, 0, y)
+        for yr in range(0, 100):
+            Wall(self, 31, yr)
 
     def run(self):
         # game loop - set self.playing = False to end the game
