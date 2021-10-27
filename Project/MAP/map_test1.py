@@ -29,6 +29,15 @@ class Game:
             Wall(self, 0, y)
         for yr in range(0, 100):
             Wall(self, 31, yr)
+        for a in range(14, 25):
+            for b in range(6, 15):
+                RoomFloor(self, a, b)
+        for a in range(13, 26):
+            RoomWall(self, a, 5)
+            RoomWall(self, a, 16)
+        for b in range(5, 16):
+            RoomWall(self, 13, b)
+            RoomWall(self, 26, b)
 
     def run(self):
         # game loop - set self.playing = False to end the game
