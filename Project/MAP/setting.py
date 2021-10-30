@@ -11,7 +11,7 @@ YELLOW = (255, 255, 0)
 WIDTH = 1024   #32 * 32
 HEIGHT = 768   #32 * 24
 FPS = 120
-TITLE = "Map_test1"
+TITLE = "Map_test1_demo"
 BGCOLOR = DARKGREY #backgroud color
 
 TILESIZE = 32
