@@ -1,5 +1,6 @@
 import pygame
 from config import *
+from Player import Player
 from Enemy import Enemy
 
 pygame.init()
@@ -7,10 +8,11 @@ pygame.display.set_caption("time crawlers")
 
 BG = (155, 155, 155)
 
+player = Player("player", 200, 400, 2, 5)
+fly = Enemy("fly", 400, 400, 1, 5)
+
 def draw_bg():
     WIN.fill(BG)
-
-fly = Enemy("fly", 400, 400, 1, 5)
 
 def main():
     running = True
@@ -26,15 +28,23 @@ def main():
     while running:
         draw_bg()
 
+        player.update()
+        player.draw()
+        
+        if player.alive:
+            if shoot:
+                player.shoot()
+            if moving_left or moving_right or moving_up or moving_down:
+                player.update_action(1) # 1: run
+            else:
+                player.update_action(0) # 0: idle
+            player.move(moving_left, moving_right, moving_up, moving_down)
+
         fly.update()
         fly.draw()
-        fly.move(moving_left, moving_right, moving_up, moving_down)
 
         sphere_group.update()
-        sphere_group.draw(WIN)
-
-        if shoot:
-            fly.shoot()
+        sphere_group.draw(WIN)        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
