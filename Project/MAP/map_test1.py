@@ -2,7 +2,7 @@
 import pygame as pg
 import sys
 from os import path
-from settings import *
+from setting import *
 from sprites import *
 from tilemap import *
 
