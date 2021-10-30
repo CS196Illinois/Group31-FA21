@@ -51,14 +51,14 @@ class Game:
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
-        # for row, tiles in enumerate(self.map.data):
-        #     for col, tile in enumerate(tiles):
-        #         if tile == '1':
-        #             Wall(self, col, row)
-        #         if tile == 'M':
-        #             Mob(self, col, row)
-        #         if tile == 'P':
-        #             self.player = Player(self, col, row)
+        for row, tiles in enumerate(self.map.tmxdata):
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    Wall(self, col, row)
+                if tile == 'M':
+                    Mob(self, col, row)
+                if tile == 'P':
+                    self.player = Player(self, col, row)
         self.player = Player(self, 5, 5)
         self.camera = Camera(self.map.width, self.map.height)
 
@@ -102,7 +102,7 @@ class Game:
 
     def draw(self):
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-        # self.screen.fill(BGCOLOR)
+        #self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # self.draw_grid()
         for sprite in self.all_sprites:
