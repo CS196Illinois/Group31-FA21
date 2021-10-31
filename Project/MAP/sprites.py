@@ -37,6 +37,7 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(x, y) * TILESIZE
         self.rot = 0
         self.last_shot = 0
+        self.health = PLAYER_HEALTH
 
     def get_keys(self):
         self.rot_speed = 0
@@ -147,5 +148,3 @@ class Wall(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
