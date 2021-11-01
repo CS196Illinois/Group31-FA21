@@ -6,6 +6,7 @@ from setting import *
 from sprites import *
 from tilemap import *
 # HUD functions
+"""
 def draw_player_health(surf, x, y, pct):
     if pct < 0:
         pct = 0
@@ -22,6 +23,7 @@ def draw_player_health(surf, x, y, pct):
         col = RED
     pg.draw.rect(surf, col, fill_rect)
     pg.draw.rect(surf, WHITE, outline_rect, 2)
+"""
 class Game:
     def __init__(self):
         pg.init()
@@ -38,14 +40,14 @@ class Game:
         self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
         self.bullet_img = pg.image.load(path.join(img_folder, BULLET_IMG)).convert_alpha()
-        self.mob_img = pg.image.load(path.join(img_folder, MOB_IMG)).convert_alpha()
+        #self.mob_img = pg.image.load(path.join(img_folder, MOB_IMG)).convert_alpha()
         self.wall_img = pg.image.load(path.join(img_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
     def new(self):
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        self.mobs = pg.sprite.Group()
+        #self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         for row, tiles in enumerate(self.map.tmxdata):
             for col, tile in enumerate(tiles):
@@ -74,6 +76,7 @@ class Game:
         self.all_sprites.update()
         self.camera.update(self.player)
         # mobs hit player
+        """
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             self.player.health -= MOB_DAMAGE
@@ -87,6 +90,8 @@ class Game:
         for hit in hits:
             hit.health -= BULLET_DAMAGE
             hit.vel = vec(0, 0)
+        """
+
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
@@ -99,12 +104,14 @@ class Game:
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # self.draw_grid()
         for sprite in self.all_sprites:
-            if isinstance(sprite, Mob):
-                sprite.draw_health()
+            #if isinstance(sprite, Mob):
+                #sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         # HUD functions
+        """
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        """
         pg.display.flip()
     def events(self):
         # catch all events here
