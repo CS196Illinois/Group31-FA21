@@ -5,25 +5,7 @@ from os import path
 from setting import *
 from sprites import *
 from tilemap import *
-# HUD functions
-"""
-def draw_player_health(surf, x, y, pct):
-    if pct < 0:
-        pct = 0
-    BAR_LENGTH = 100
-    BAR_HEIGHT = 20
-    fill = pct * BAR_LENGTH
-    outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
-    if pct > 0.6:
-        col = GREEN
-    elif pct > 0.3:
-        col = YELLOW
-    else:
-        col = RED
-    pg.draw.rect(surf, col, fill_rect)
-    pg.draw.rect(surf, WHITE, outline_rect, 2)
-"""
+
 class Game:
     def __init__(self):
         pg.init()
@@ -45,7 +27,7 @@ class Game:
         self.wall_img = pg.transform.scale(self.wall_img, (TILESIZE, TILESIZE))
     def new(self):
         # initialize all variables and do all the setup for a new game
-        self.all_sprites = pg.sprite.Group()
+        self.dif_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         #self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
@@ -73,7 +55,7 @@ class Game:
         sys.exit()
     def update(self):
         # update portion of the game loop
-        self.all_sprites.update()
+        self.dif_sprites.update()
         self.camera.update(self.player)
         # mobs hit player
         """
@@ -103,7 +85,7 @@ class Game:
         #self.screen.fill(BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         # self.draw_grid()
-        for sprite in self.all_sprites:
+        for sprite in self.dif_sprites:
             #if isinstance(sprite, Mob):
                 #sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
