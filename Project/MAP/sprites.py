@@ -148,7 +148,6 @@ class Wall(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
-<<<<<<< HEAD
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
@@ -177,5 +176,3 @@ class RoomFloor(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-=======
->>>>>>> 2cdae04dc9d16c1e29820c65cd86560f0ded17d7
