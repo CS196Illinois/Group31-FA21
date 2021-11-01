@@ -3,7 +3,7 @@ import os
 from Sphere import Sphere
 from config import *
 
-class Enemy(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
@@ -22,7 +22,7 @@ class Enemy(pygame.sprite.Sprite):
         self.action = 0
         self.update_time = pygame.time.get_ticks()
 
-        animation_types = ["idle", "death"]
+        animation_types = ["idle", "run", "death"]
         for animation in animation_types:
             temp_list = []
             num_of_frames = len(os.listdir(f"assets/{self.char_type}/{animation}"))
@@ -39,24 +39,19 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.update_animation()
         self.check_alive()
-        self.healthbar(WIN)
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
-        if pygame.sprite.spritecollide(self, sphere_group, True): # should be False - Sphere circular import issue
-            if self.alive:
-                self.health -= 10
-                self.kill()
-    
+        
     def move(self, moving_left, moving_right, moving_up, moving_down):
         dx, dy = 0, 0
 
         if moving_left:
             dx = -self.speed
-            self.flip = False
+            self.flip = True
             self.direction = -1
         if moving_right:
             dx = self.speed
-            self.flip = True
+            self.flip = False
             self.direction = 1
         if moving_up:
             dy = -self.speed
@@ -69,7 +64,7 @@ class Enemy(pygame.sprite.Sprite):
     def shoot(self):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = 20
-            sphere = Sphere(self.rect.centerx, self.rect.centery, self.direction)
+            sphere = Sphere(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
             sphere_group.add(sphere)
 
     def update_animation(self):
@@ -80,24 +75,23 @@ class Enemy(pygame.sprite.Sprite):
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         if self.frame_index >= len(self.animation_list[self.action]):
-            self.frame_index = 0
+            if self.action == 2:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.frame_index = 0
     
     def update_action(self, new_action):
         if new_action != self.action:
             self.action = new_action
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
-
+    
     def check_alive(self):
         if self.health <= 0:
             self.health = 0
             self.speed = 0
             self.alive = False
-            self.update_action(1)
-    
-    def healthbar(self, window):
-        pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
-        pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
+            self.update_action(2)
     
     def draw(self):
         WIN.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
