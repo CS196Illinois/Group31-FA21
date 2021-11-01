@@ -45,26 +45,6 @@ class Game:
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-<<<<<<< HEAD
-        self.player = Player(self, 10, 10)
-        for x in range(0, 100):
-            Wall(self, x, 0)
-        for xd in range(0, 100):
-            Wall(self, xd, 23)
-        for y in range(0, 100):
-            Wall(self, 0, y)
-        for yr in range(0, 100):
-            Wall(self, 31, yr)
-        for a in range(14, 25):
-            for b in range(6, 15):
-                RoomFloor(self, a, b)
-        for a in range(13, 26):
-            RoomWall(self, a, 5)
-            RoomWall(self, a, 16)
-        for b in range(5, 16):
-            RoomWall(self, 13, b)
-            RoomWall(self, 26, b)
-=======
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         for row, tiles in enumerate(self.map.tmxdata):
@@ -77,7 +57,6 @@ class Game:
                     self.player = Player(self, col, row)
         self.player = Player(self, 5, 5)
         self.camera = Camera(self.map.width, self.map.height)
->>>>>>> 2cdae04dc9d16c1e29820c65cd86560f0ded17d7
 
     def run(self):
         # game loop - set self.playing = False to end the game
