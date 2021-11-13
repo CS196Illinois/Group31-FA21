@@ -6,9 +6,12 @@ from config import *
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
+        self.alive = True
         self.char_type = char_type
         self.scale = scale
         self.speed = speed
+        self.health = 100
+        self.max_health = self.health
         
         self.shoot_cooldown = 0
         self.direction = 1
@@ -19,7 +22,7 @@ class Enemy(pygame.sprite.Sprite):
         self.action = 0
         self.update_time = pygame.time.get_ticks()
 
-        animation_types = ["Idle"]
+        animation_types = ["idle", "death"]
         for animation in animation_types:
             temp_list = []
             num_of_frames = len(os.listdir(f"assets/{self.char_type}/{animation}"))
@@ -35,8 +38,14 @@ class Enemy(pygame.sprite.Sprite):
     
     def update(self):
         self.update_animation()
+        self.check_alive()
+        self.healthbar(WIN)
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
+        if pygame.sprite.spritecollide(self, sphere_group, True): # should be False - Sphere circular import issue
+            if self.alive:
+                self.health -= 10
+                self.kill()
     
     def move(self, moving_left, moving_right, moving_up, moving_down):
         dx, dy = 0, 0
@@ -78,6 +87,17 @@ class Enemy(pygame.sprite.Sprite):
             self.action = new_action
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
+
+    def check_alive(self):
+        if self.health <= 0:
+            self.health = 0
+            self.speed = 0
+            self.alive = False
+            self.update_action(1)
+    
+    def healthbar(self, window):
+        pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
+        pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
     
     def draw(self):
         WIN.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
