@@ -1,8 +1,7 @@
 import pygame
-import os
-import math
 from timePlayer import Player
 from timeEnemy import Enemy
+from timeChaser import Chaser
 from timeConfig import *
 
 pygame.init()
@@ -34,7 +33,8 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
-enemy = Enemy('enemy', 400, 200, 2, 5)
+# enemy = Enemy('enemy', 400, 200, 2, 5)
+enemy = Chaser('enemy', 400, 200, 2, 5)
 
 run = True
 while run:
@@ -60,10 +60,11 @@ while run:
     if player.alive:
         #shoot bullets
         if shoot:
-            player.shoot()
+            player.shoot(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
-        elif moving_left or moving_right or moving_up or moving_down:
+        
+        if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
         else:
             player.update_action(0)#0: idle
@@ -83,13 +84,14 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-            if event.key == pygame.K_SPACE:
-                shoot = True
+            # if event.key == pygame.K_SPACE:
+            #     shoot = True
             if event.key == pygame.K_ESCAPE:
                 run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                slash = True
+                # slash = True
+                shoot = True
 
 
         #keyboard button released
@@ -106,7 +108,8 @@ while run:
                 shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
-                slash = False
+                # slash = False
+                shoot = False
 
     pygame.display.update()
 

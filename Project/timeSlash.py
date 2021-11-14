@@ -22,10 +22,3 @@ class Slash(pygame.sprite.Sprite):
         self.rect.y -= int(self.y_vel)
         if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
             self.kill()
-        # 
-        # 
-        # 
-        # if pygame.sprite.spritecollide(enemy, slash_group, False):
-        #     if enemy.alive:
-        #         enemy.health -= 40
-        #         self.kill()

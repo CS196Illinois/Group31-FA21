@@ -72,11 +72,16 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += dx
         self.rect.y += dy
 
-    def shoot(self):
+    # def shoot(self):
+    #     if self.shoot_cooldown == 0:
+    #         self.shoot_cooldown = 5
+    #         bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.xdir), self.rect.centery, self.xdir, self.ydir)
+    #         bullet_group.add(bullet)
+    
+    def shoot(self, mouse_x, mouse_y):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = 20
-            bullet = Bullet(self
-            .rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
+            bullet = Bullet(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             bullet_group.add(bullet)
     
     def slash(self, mouse_x, mouse_y):

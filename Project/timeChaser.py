@@ -4,7 +4,7 @@ from timeConfig import *
 from timeBullet import Bullet
 from timeSlash import Slash
 
-class Enemy(pygame.sprite.Sprite):
+class Chaser(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
