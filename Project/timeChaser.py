@@ -12,9 +12,7 @@ class Chaser(pygame.sprite.Sprite):
         self.speed = speed
         self.health = 100
         self.max_health = self.health
-        
-        self.shoot_cooldown = 0
-        self.slash_cooldown = 0
+
         self.direction = 1
         self.flip = False
 
@@ -40,61 +38,47 @@ class Chaser(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def update(self, screen):
+    def update(self, screen, player):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
-        #update cooldown
-        if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
-        if self.slash_cooldown > 0:
-            self.slash_cooldown -= 1
+        self.move(player)
 
         hit_bullet = pygame.sprite.spritecollide(self, bullet_group, False)
         hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
 
         if hit_bullet:
             if self.alive:
-                self.health -= 1
+                self.health -= 2
                 bullet_group.remove(hit_bullet)
         if hit_slash:
             if self.alive:
                 self.health -= 40
                 slash_group.remove(hit_slash)
 
-    def move(self, moving_left, moving_right, moving_up, moving_down):
+    def move(self, player):
         #reset movement variables
-        dx, dy = 0, 0
+        dx, dy = (player.rect.x-self.rect.x), (player.rect.y-self.rect.y)
 
-        #assign movement variables if moving left or right
-        if moving_left:
-            dx = -self.speed
-            self.flip = True
-            self.direction = -1
-        if moving_right:
-            dx = self.speed
-            self.flip = False
-            self.direction = 1
-        if moving_up:
-            dy = -self.speed
-        if moving_down:
-            dy = self.speed
-
-        #update rectangle position
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def shoot(self):
-        if self.shoot_cooldown == 0:
-            self.shoot_cooldown = 20
-            bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
-            bullet_group.add(bullet)
-    
-    def slash(self, mouse_x, mouse_y):
-        if self.slash_cooldown == 0:
-            self.slash_cooldown = 40
-            slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
-            slash_group.add(slash)
+        if self.alive:
+            if dx == 0 and dy == 0:
+                self.update_action(0)
+            if dx < 0:
+                self.rect.x -= self.speed
+                self.flip = True
+                self.update_action(1)
+            elif dx >= 1:
+                self.rect.x += self.speed
+                self.flip = False
+                self.update_action(1)
+            if dy < 0:
+                self.rect.y -= self.speed
+                self.update_action(1)
+            elif dy >= 1:
+                self.rect.y += self.speed
+                self.update_action(1)
+        else:
+            self.update_action(2)
     
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))

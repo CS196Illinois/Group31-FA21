@@ -33,8 +33,7 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
-# enemy = Enemy('enemy', 400, 200, 2, 5)
-enemy = Chaser('enemy', 400, 200, 2, 5)
+chaser = Chaser('enemy', 400, 200, 2, 1)
 
 run = True
 while run:
@@ -42,10 +41,10 @@ while run:
 
     draw_bg()
 
-    player.update(screen)
+    chaser.update(screen, player)
+    chaser.draw(screen)
+    player.update(screen, chaser)
     player.draw(screen)
-    enemy.update(screen)
-    enemy.draw(screen)
 
     #update and draw groups
     bullet_group.update()

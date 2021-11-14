@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
+        self.knockback_cooldown = 0
         
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
@@ -40,7 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def update(self, screen):
+    def update(self, screen, enemy):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
@@ -49,6 +50,7 @@ class Player(pygame.sprite.Sprite):
             self.shoot_cooldown -= 1
         if self.slash_cooldown > 0:
             self.slash_cooldown -= 1
+        self.knockback(enemy)
 
     def move(self, moving_left, moving_right, moving_up, moving_down):
         #reset movement variables
@@ -71,17 +73,28 @@ class Player(pygame.sprite.Sprite):
         #update rectangle position
         self.rect.x += dx
         self.rect.y += dy
-
-    # def shoot(self):
-    #     if self.shoot_cooldown == 0:
-    #         self.shoot_cooldown = 5
-    #         bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.xdir), self.rect.centery, self.xdir, self.ydir)
-    #         bullet_group.add(bullet)
     
+    def knockback(self, enemy):
+        if self.alive and enemy.alive:
+            if self.rect.colliderect(enemy.rect):
+                self.health -= 10
+                self.knockback_cooldown = 15
+                    
+        if self.knockback_cooldown > 0:
+            self.knockback_cooldown -= 1
+        if (self.rect.x-enemy.rect.x) > 0:
+            self.rect.x += self.knockback_cooldown
+        else:
+            self.rect.x -= self.knockback_cooldown
+        if (self.rect.y-enemy.rect.y) > 0:
+            self.rect.y += self.knockback_cooldown
+        else:
+            self.rect.y -= self.knockback_cooldown
+
     def shoot(self, mouse_x, mouse_y):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = 20
-            bullet = Bullet(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
+            bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, mouse_x, mouse_y)
             bullet_group.add(bullet)
     
     def slash(self, mouse_x, mouse_y):
