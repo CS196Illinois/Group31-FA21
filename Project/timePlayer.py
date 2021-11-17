@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.action = 0
         self.update_time = pygame.time.get_ticks()
         self.knockback_cooldown = 0
-        
+
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
         for animation in animation_types:
@@ -74,13 +74,13 @@ class Player(pygame.sprite.Sprite):
         #update rectangle position
         self.rect.x += dx
         self.rect.y += dy
-    
+
     def knockback(self, enemy):
         if self.alive and enemy.alive:
             if self.rect.colliderect(enemy.rect):
                 self.health -= 10
                 self.knockback_cooldown = 15
-                    
+
         if self.knockback_cooldown > 0:
             self.knockback_cooldown -= 1
         if (self.rect.x-enemy.rect.x) > 0:
@@ -97,13 +97,13 @@ class Player(pygame.sprite.Sprite):
             self.shoot_cooldown = 20
             bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, mouse_x, mouse_y)
             bullet_group.add(bullet)
-    
+
     def slash(self, mouse_x, mouse_y):
         if self.slash_cooldown == 0:
             self.slash_cooldown = 40
             slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             slash_group.add(slash)
-    
+
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
