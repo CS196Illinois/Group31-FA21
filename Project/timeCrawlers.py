@@ -87,10 +87,19 @@ while run:
             #     shoot = True
             if event.key == pygame.K_ESCAPE:
                 run = False
+            if event.key == pygame.K_1:
+                player.equippedWeapon = "slash"
+            if event.key == pygame.K_2:
+                player.equippedWeapon = "shotgun"
+            if event.key == pygame.K_3:
+                player.equippedWeapon = "sniper"
+        
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                # slash = True
-                shoot = True
+                if player.equippedWeapon == "slash":
+                    slash = True
+                if player.equippedWeapon == "shotgun":
+                    shoot = True
 
 
         #keyboard button released
@@ -107,7 +116,7 @@ while run:
                 shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
-                # slash = False
+                slash = False
                 shoot = False
 
     pygame.display.update()

@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
         
+        self.equippedWeapon = "slash"
         self.shoot_cooldown = 0
         self.slash_cooldown = 0
         self.direction = 1
