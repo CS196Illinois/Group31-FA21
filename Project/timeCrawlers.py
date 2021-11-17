@@ -1,7 +1,12 @@
 import pygame
+
 import os
 import math
 import random
+from timePlayer import Player
+from timeEnemy import Enemy
+from timeChaser import Chaser
+from timeConfig import *
 
 pygame.init()
 
@@ -23,21 +28,14 @@ moving_down = False
 shoot = False
 slash = False
 
-#load images
-#bullet
-bullet_img = pygame.image.load('assets/icons/bullet.png').convert_alpha()
-#slash
-slash_img = pygame.image.load('assets/icons/slash.png').convert_alpha()
-
 #define colours
 BG = (155, 155, 155)
 RED = (255, 0, 0)
 
-mouse_x, mouse_y = 0, 0
-
 def draw_bg():
     screen.fill(BG)
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
+
 
 class Soldier(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
@@ -226,21 +224,19 @@ class Slash(pygame.sprite.Sprite):
 bullet_group = pygame.sprite.Group()
 slash_group = pygame.sprite.Group()
 
-player = Soldier('player', 200, 200, 2, 5)
-enemy = Soldier('enemy', 400, 200, 2, 5)
+player = Player('player', 200, 200, 2, 5)
+chaser = Chaser('enemy', 400, 200, 2, 1)
 
 run = True
 while run:
-
     clock.tick(FPS)
 
     draw_bg()
 
-    player.update()
-    player.draw()
-
-    enemy.update()
-    enemy.draw()
+    chaser.update(screen, player)
+    chaser.draw(screen)
+    player.update(screen, chaser)
+    player.draw(screen)
 
     #update and draw groups
     bullet_group.update()
@@ -255,10 +251,11 @@ while run:
     if player.alive:
         #shoot bullets
         if shoot:
-            player.shoot()
+            player.shoot(mouse_x, mouse_y)
         elif slash:
-            player.slash()
-        elif moving_left or moving_right or moving_up or moving_down:
+            player.slash(mouse_x, mouse_y)
+        
+        if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
         else:
             player.update_action(0)#0: idle
@@ -278,22 +275,24 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
+
             if event.key == pygame.K_1:
                 player.equippedWeapon = "slash"
             if event.key == pygame.K_2:
                 player.equippedWeapon = "shotgun"
             if event.key == pygame.K_3:
                 player.equippedWeapon = "sniper"
+ 
             if event.key == pygame.K_ESCAPE:
                 run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
+
                 print(player.equippedWeapon)
                 if player.equippedWeapon == "slash":
                     slash = True
                 if player.equippedWeapon == "shotgun":
                     shoot = True
-
 
         #keyboard button released
         if event.type == pygame.KEYUP:
@@ -307,6 +306,7 @@ while run:
                 moving_down = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
+
                 slash = False
                 shoot = False
 
