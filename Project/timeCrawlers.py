@@ -46,7 +46,6 @@ class Soldier(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
 
-        self.equippedWeapon = "slash"
         self.shoot_cooldown = 0
         self.slash_cooldown = 0
         self.direction = 1
@@ -254,7 +253,7 @@ while run:
             player.shoot(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
-        
+
         if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
         else:
@@ -282,7 +281,7 @@ while run:
                 player.equippedWeapon = "shotgun"
             if event.key == pygame.K_3:
                 player.equippedWeapon = "sniper"
- 
+
             if event.key == pygame.K_ESCAPE:
                 run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
