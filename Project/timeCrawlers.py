@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random
 
 pygame.init()
 
@@ -46,7 +47,8 @@ class Soldier(pygame.sprite.Sprite):
         self.speed = speed
         self.health = 100
         self.max_health = self.health
-        
+
+        self.equippedWeapon = "slash"
         self.shoot_cooldown = 0
         self.slash_cooldown = 0
         self.direction = 1
@@ -56,7 +58,7 @@ class Soldier(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
-        
+
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
         for animation in animation_types:
@@ -109,16 +111,20 @@ class Soldier(pygame.sprite.Sprite):
     def shoot(self):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = 20
-            bullet = Bullet(self
-            .rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
-            bullet_group.add(bullet)
-    
+
+            for i in range (0, 8):
+                randomX = random.randrange(-40, 40)
+                randomY = random.randrange(-40 , 40)
+                bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), \
+                    self.rect.centery, mouse_x + randomX, mouse_y + randomY)
+                bullet_group.add(bullet)
+
     def slash(self):
         if self.slash_cooldown == 0:
-            self.slash_cooldown = 40
+            self.slash_cooldown = 20
             slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             slash_group.add(slash)
-    
+
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
@@ -158,19 +164,25 @@ class Soldier(pygame.sprite.Sprite):
         screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction):
+    def __init__(self, x, y, mouse_x, mouse_y):
         pygame.sprite.Sprite.__init__(self)
         self.speed = 10
+        self.angle = math.atan2(y - mouse_y, x - mouse_x)
+        self.x_vel = math.cos(self.angle) * self.speed
+        self.y_vel = math.sin(self.angle) * self.speed
         self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.direction = direction
+        self.mouse_x = mouse_x
+        self.mouse_y = mouse_y
 
     def update(self):
         #move bullet
-        self.rect.x += (self.direction * self.speed)
+        self.rect.x -= int(self.x_vel)
+        self.rect.y -= int(self.y_vel)
         #check if bullet has gone off screen
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.y < -50 or \
+            self.rect.y > SCREEN_HEIGHT:
             self.kill()
 
         #check collision with characters
@@ -197,11 +209,12 @@ class Slash(pygame.sprite.Sprite):
         self.mouse_y = mouse_y
 
         pygame.transform.rotozoom(self.image, self.angle, 1)
-    
+
     def update(self):
         self.rect.x -= int(self.x_vel)
         self.rect.y -= int(self.y_vel)
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.y < -50 or \
+            self.rect.y > SCREEN_HEIGHT:
             self.kill()
         if pygame.sprite.spritecollide(enemy, slash_group, False):
             if enemy.alive:
@@ -265,13 +278,21 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-            if event.key == pygame.K_SPACE:
-                shoot = True
+            if event.key == pygame.K_1:
+                player.equippedWeapon = "slash"
+            if event.key == pygame.K_2:
+                player.equippedWeapon = "shotgun"
+            if event.key == pygame.K_3:
+                player.equippedWeapon = "sniper"
             if event.key == pygame.K_ESCAPE:
                 run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                slash = True
+                print(player.equippedWeapon)
+                if player.equippedWeapon == "slash":
+                    slash = True
+                if player.equippedWeapon == "shotgun":
+                    shoot = True
 
 
         #keyboard button released
@@ -284,11 +305,10 @@ while run:
                 moving_up = False
             if event.key == pygame.K_s:
                 moving_down = False
-            if event.key == pygame.K_SPACE:
-                shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 slash = False
+                shoot = False
 
     pygame.display.update()
 
@@ -343,4 +363,3 @@ pygame.quit()
 
 # if __name__ == "__main__": # call main function
 #     main()
-
