@@ -1,8 +1,4 @@
 import pygame
-
-import os
-import math
-import random
 from timePlayer import Player
 from timeEnemy import Enemy
 from timeChaser import Chaser
@@ -35,10 +31,6 @@ RED = (255, 0, 0)
 def draw_bg():
     screen.fill(BG)
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
-
-#create sprite groups
-bullet_group = pygame.sprite.Group()
-slash_group = pygame.sprite.Group()
 
 player = Player('player', 200, 200, 2, 5)
 chaser = Chaser('enemy', 400, 200, 2, 1)
@@ -91,7 +83,10 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-
+            # if event.key == pygame.K_SPACE:
+            #     shoot = True
+            if event.key == pygame.K_ESCAPE:
+                run = False
             if event.key == pygame.K_1:
                 player.equippedWeapon = "slash"
             if event.key == pygame.K_2:
@@ -99,16 +94,13 @@ while run:
             if event.key == pygame.K_3:
                 player.equippedWeapon = "sniper"
 
-            if event.key == pygame.K_ESCAPE:
-                run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-
-                print(player.equippedWeapon)
                 if player.equippedWeapon == "slash":
                     slash = True
                 if player.equippedWeapon == "shotgun":
                     shoot = True
+
 
         #keyboard button released
         if event.type == pygame.KEYUP:
@@ -120,9 +112,10 @@ while run:
                 moving_up = False
             if event.key == pygame.K_s:
                 moving_down = False
+            if event.key == pygame.K_SPACE:
+                shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
-
                 slash = False
                 shoot = False
 
