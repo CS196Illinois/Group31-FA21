@@ -21,7 +21,8 @@ moving_left = False
 moving_right = False
 moving_up = False
 moving_down = False
-shoot = False
+shootShotgun = False
+shootSniper = False
 slash = False
 
 #define colours
@@ -50,6 +51,12 @@ while run:
     bullet_group.update()
     bullet_group.draw(screen)
 
+    sniperbullet_group.update()
+    sniperbullet_group.draw(screen)
+    for sniperbullet in sniperbullet_group:
+        sniperbullet.tracers.update()
+        sniperbullet.tracers.draw(screen)
+
     slash_group.update()
     slash_group.draw(screen)
 
@@ -57,9 +64,11 @@ while run:
 
     #update player actions
     if player.alive:
-        #shoot bullets
-        if shoot:
-            player.shoot(mouse_x, mouse_y)
+        # bullets
+        if shootShotgun:
+            player.shootShotgun(mouse_x, mouse_y)
+        elif shootSniper:
+            player.shootSniper(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
 
@@ -84,7 +93,7 @@ while run:
             if event.key == pygame.K_s:
                 moving_down = True
             # if event.key == pygame.K_SPACE:
-            #     shoot = True
+            #      = True
             if event.key == pygame.K_ESCAPE:
                 run = False
             if event.key == pygame.K_1:
@@ -99,7 +108,9 @@ while run:
                 if player.equippedWeapon == "slash":
                     slash = True
                 if player.equippedWeapon == "shotgun":
-                    shoot = True
+                    shootShotgun = True
+                if player.equippedWeapon == "sniper":
+                    shootSniper = True
 
 
         #keyboard button released
@@ -112,12 +123,11 @@ while run:
                 moving_up = False
             if event.key == pygame.K_s:
                 moving_down = False
-            if event.key == pygame.K_SPACE:
-                shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 slash = False
-                shoot = False
+                shootShotgun = False
+                shootSniper = False
 
     pygame.display.update()
 

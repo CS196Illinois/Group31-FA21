@@ -3,6 +3,8 @@ import os
 from timeConfig import *
 from timeBullet import Bullet
 from timeSlash import Slash
+from timeSniperBullet import sniperBullet
+import math
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
@@ -12,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = speed
         self.health = 100
         self.max_health = self.health
-        
+
         self.equippedWeapon = "slash"
         self.shoot_cooldown = 0
         self.slash_cooldown = 0
@@ -92,11 +94,22 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.y -= self.knockback_cooldown
 
-    def shoot(self, mouse_x, mouse_y):
+    def shootShotgun(self, mouse_x, mouse_y):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = 20
-            bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, mouse_x, mouse_y)
-            bullet_group.add(bullet)
+            for i in range(-2, 3):
+                bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), \
+                    self.rect.centery, mouse_x, mouse_y)
+                bullet.shotgunBullet = True
+                bullet.angle += (math.pi / 12) * i
+                bullet_group.add(bullet)
+
+    def shootSniper(self, mouse_x, mouse_y):
+        if self.shoot_cooldown == 0:
+            self.shoot_cooldown = 60
+            bullet = sniperBullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), \
+                self.rect.centery, mouse_x, mouse_y)
+            sniperbullet_group.add(bullet)
 
     def slash(self, mouse_x, mouse_y):
         if self.slash_cooldown == 0:
