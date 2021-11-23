@@ -1,8 +1,6 @@
 import pygame
 import os
 from timeConfig import *
-from timeBullet import Bullet
-from timeSlash import Slash
 
 class Chaser(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
