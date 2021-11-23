@@ -3,6 +3,7 @@ from timePlayer import Player
 from timeEnemy import Enemy
 from timeChaser import Chaser
 from timeSniper import Sniper
+from timeGiant import Giant
 from timeConfig import *
 
 pygame.init()
@@ -31,7 +32,7 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
-enemy = Sniper('enemy', 400, 200, 2, 1)
+enemy = Giant('enemy', 600, 200, 4, 1)
 
 run = True
 while run:

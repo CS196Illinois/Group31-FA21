@@ -1,10 +1,10 @@
 import pygame
 import os
+import random
 from timeConfig import *
 from timeBullet import Bullet
-from timeSlash import Slash
 
-class Player(pygame.sprite.Sprite):
+class Giant(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
@@ -13,7 +13,6 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
         
-        self.equippedWeapon = "slash"
         self.shoot_cooldown = 0
         self.slash_cooldown = 0
         self.direction = 1
@@ -23,8 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
-        self.knockback_cooldown = 0
-
+        
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
         for animation in animation_types:
@@ -42,81 +40,68 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def update(self, screen, enemy):
+    def update(self, screen, player):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
-        self.knockback(enemy)
+        self.move(player)
+        self.shoot(player)
 
         #update cooldown
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
-        if self.slash_cooldown > 0:
-            self.slash_cooldown -= 1
-        
-        hit_ebullet = pygame.sprite.spritecollide(self, ebullet_group, False)
-        # hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
 
-        if hit_ebullet:
+        hit_bullet = pygame.sprite.spritecollide(self, bullet_group, False)
+        hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
+
+        if hit_bullet:
             if self.alive:
-                self.health -= 5
-                ebullet_group.remove(hit_ebullet)
-        # if hit_slash:
-        #     if self.alive:
-        #         self.health -= 40
-        #         slash_group.remove(hit_slash)
+                self.health -= 1
+                bullet_group.remove(hit_bullet)
+        if hit_slash:
+            if self.alive:
+                self.health -= 40
+                slash_group.remove(hit_slash)
 
-    def move(self, moving_left, moving_right, moving_up, moving_down):
+    def move(self, player):
         #reset movement variables
-        dx, dy = 0, 0
+        dx, dy = (player.rect.centerx-self.rect.centerx), (player.rect.centery-self.rect.centery)
 
-        #assign movement variables if moving left or right
-        if moving_left:
-            dx = -self.speed
-            self.flip = True
-            self.direction = -1
-        if moving_right:
-            dx = self.speed
-            self.flip = False
-            self.direction = 1
-        if moving_up:
-            dy = -self.speed
-        if moving_down:
-            dy = self.speed
-
-        #update rectangle position
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def knockback(self, enemy):
-        if self.alive and enemy.alive:
-            if self.rect.colliderect(enemy.rect):
-                self.health -= 10
-                self.knockback_cooldown = 15
-
-        if self.knockback_cooldown > 0:
-            self.knockback_cooldown -= 1
-        if (self.rect.x-enemy.rect.x) > 0:
-            self.rect.x += self.knockback_cooldown
+        if self.alive:
+            if dx == 0 and dy == 0:
+                self.update_action(0)
+            if dx < 0:
+                self.rect.x -= self.speed
+                self.flip = True
+                self.update_action(1)
+            elif dx >= 1:
+                self.rect.x += self.speed
+                self.flip = False
+                self.update_action(1)
+            if dy < 0:
+                self.rect.y -= self.speed
+                self.update_action(1)
+            elif dy >= 1:
+                self.rect.y += self.speed
+                self.update_action(1)
         else:
-            self.rect.x -= self.knockback_cooldown
-        if (self.rect.y-enemy.rect.y) > 0:
-            self.rect.y += self.knockback_cooldown
-        else:
-            self.rect.y -= self.knockback_cooldown
+            self.update_action(2)
 
-    def shoot(self, mouse_x, mouse_y):
-        if self.shoot_cooldown == 0:
-            self.shoot_cooldown = 20
-            bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, mouse_x, mouse_y)
-            bullet_group.add(bullet)
-
-    def slash(self, mouse_x, mouse_y):
-        if self.slash_cooldown == 0:
-            self.slash_cooldown = 40
-            slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
-            slash_group.add(slash)
-
+    def shoot(self, player):
+        if self.alive:
+            if self.shoot_cooldown == 0:
+                self.shoot_cooldown = 120
+                ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery, 
+                    player.rect.centerx, player.rect.centery))
+                for i in range(2):
+                    randrange = random.randrange(100, 200)
+                    ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery, 
+                        player.rect.centerx, player.rect.centery + randrange))
+                for i in range(2):
+                    randrange = random.randrange(100, 200)
+                    ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery, 
+                        player.rect.centerx, player.rect.centery - randrange))
+    
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
