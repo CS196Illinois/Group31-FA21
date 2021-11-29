@@ -9,6 +9,7 @@ pygame.init()
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
+#bg = pygame.image.load('assets/tile/5.png')
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('time crawler')
