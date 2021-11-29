@@ -2,6 +2,7 @@ import pygame
 from timePlayer import Player
 from timeEnemy import Enemy
 from timeChaser import Chaser
+from timeWall import Wall
 from timeConfig import *
 
 pygame.init()

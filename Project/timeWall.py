@@ -4,12 +4,11 @@ from timeConfig import *
 from timeBullet import Bullet
 from timeSlash import Slash
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, char_type, x, y, scale, speed):
+class Wall(pygame.sprite.Sprite):
+    def __init__(self, char_type, x, y, scale):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
         self.char_type = char_type
-        self.speed = speed
         self.health = 100
         self.max_health = self.health
 
