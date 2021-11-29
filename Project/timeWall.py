@@ -12,8 +12,6 @@ class Wall(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
 
-        self.shoot_cooldown = 0
-        self.slash_cooldown = 0
         self.direction = 1
         self.flip = False
 
@@ -24,16 +22,16 @@ class Wall(pygame.sprite.Sprite):
 
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
-        for animation in animation_types:
-            #reset temporary list of images
-            temp_list = []
-            #count number of files in the folder
-            num_of_frames = len(os.listdir(f'assets/{self.char_type}/{animation}'))
-            for i in range(num_of_frames):
-                img = pygame.image.load(f'assets/{self.char_type}/{animation}/{i}.png').convert_alpha()
-                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-                temp_list.append(img)
-            self.animation_list.append(temp_list)
+        # for animation in animation_types:
+        #     #reset temporary list of images
+        #     temp_list = []
+        #     #count number of files in the folder
+        #     num_of_frames = len(os.listdir(f'assets/{self.char_type}/{animation}'))
+        #     for i in range(num_of_frames):
+        #         img = pygame.image.load(f'assets/{self.char_type}/{animation}/{i}.png').convert_alpha()
+        #         img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
+        #         temp_list.append(img)
+        #     self.animation_list.append(temp_list)
 
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
