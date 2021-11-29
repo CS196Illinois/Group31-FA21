@@ -41,13 +41,6 @@ class Wall(pygame.sprite.Sprite):
 
     def update(self, screen):
         self.update_animation()
-        self.check_alive()
-        self.healthbar(screen)
-        #update cooldown
-        if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
-        if self.slash_cooldown > 0:
-            self.slash_cooldown -= 1
 
         hit_bullet = pygame.sprite.spritecollide(self, bullet_group, False)
         hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
@@ -84,12 +77,6 @@ class Wall(pygame.sprite.Sprite):
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
 
-    def check_alive(self):
-        if self.health <= 0:
-            self.health = 0
-            self.speed = 0
-            self.alive = False
-            self.update_action(2)
 
     def draw(self, screen):
         screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
