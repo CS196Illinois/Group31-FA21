@@ -28,6 +28,7 @@ moving_down = False
 shootShotgun = False
 shootSniper = False
 slash = False
+slowingTime = False
 
 #define colours
 BG = (155, 155, 155)
@@ -78,6 +79,12 @@ while run:
     slash_group.update()
     slash_group.draw(screen)
 
+    projectiles = pygame.sprite.Group()
+    projectiles.add(bullet_group.sprites())
+    projectiles.add(slash_group.sprites())
+    projectiles.add(sniperbullet_group.sprites())
+    print(len(projectiles));
+
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
     #update player actions
@@ -89,6 +96,7 @@ while run:
             player.shootSniper(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
+    #    if slowingTime:
 
         if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
@@ -110,8 +118,11 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-            # if event.key == pygame.K_SPACE:
-            #      = True
+            if event.key == pygame.K_SPACE:
+                if (slowingTime == False):
+                    slowingTime = True
+                else:
+                    slowingTime = False
             if event.key == pygame.K_ESCAPE:
                 run = False
             if event.key == pygame.K_1:

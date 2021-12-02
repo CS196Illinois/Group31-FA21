@@ -9,7 +9,7 @@ class Bullet(pygame.sprite.Sprite):
         self.angle = math.atan2(y - mouse_y, x - mouse_x)
         self.x_vel = math.cos(self.angle) * self.speed
         self.y_vel = math.sin(self.angle) * self.speed
-        self.image = pygame.transform.rotozoom(pygame.image.load('assets/icons/bullet.png'), -math.degrees(math.atan2(mouse_y - y, mouse_x - x)), 1)
+        self.image = pygame.transform.rotozoom(pygame.image.load('Project/assets/icons/bullet.png'), -math.degrees(math.atan2(mouse_y - y, mouse_x - x)), 1)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.mouse_x = mouse_x

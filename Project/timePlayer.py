@@ -21,6 +21,8 @@ class Player(pygame.sprite.Sprite):
         self.direction = 1
         self.flip = False
 
+        self.timeCharge = 200
+
         self.animation_list = []
         self.frame_index = 0
         self.action = 0
@@ -117,6 +119,7 @@ class Player(pygame.sprite.Sprite):
             slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             slash_group.add(slash)
 
+    #def slowTime(self, enemies, )
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))

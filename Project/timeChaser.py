@@ -50,14 +50,14 @@ class Chaser(pygame.sprite.Sprite):
 
         if hit_bullet:
             if self.alive:
-                self.health -= 10
+                self.health -= 20
                 bullet_group.remove(hit_bullet)
         if hit_sniperbullet:
             if self.alive:
                 self.health -= 100
         if hit_slash:
             if self.alive:
-                self.health -= 30
+                self.health -= 25
                 slash_group.remove(hit_slash)
 
     def move(self, player):
