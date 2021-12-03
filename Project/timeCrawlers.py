@@ -47,9 +47,11 @@ def draw_bg():
 
 player = Player('player', 200, 200, 2, 5)
 
-enemy = Giant('enemy', 600, 200, 4, 1)
-wall = Wall()
+enemy_group.add(Chaser('enemy', 650, 200, 2, 2))
+enemy_group.add(Sniper('enemy', 700, 200, 2, 2))
+enemy_group.add(Giant('enemy', 600, 200, 4, 1))
 
+wall = Wall()
 run = True
 while run:
     clock.tick(FPS)
@@ -57,10 +59,11 @@ while run:
     draw_bg()
     wall.draw_wall(screen)
     wall.draw_door(screen)
+    
+    for enemy in enemy_group.sprites():
+        enemy.update(screen, player)
+        enemy.draw(screen)
 
-
-    enemy.update(screen, player)
-    enemy.draw(screen)
     player.update(screen, enemy)
     player.draw(screen)
 
