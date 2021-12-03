@@ -16,7 +16,8 @@ class Player(pygame.sprite.Sprite):
         self.max_health = self.health
 
         self.equippedWeapon = "slash"
-        self.shoot_cooldown = 0
+        self.shotgun_cooldown = 0
+        self.sniper_cooldown = 0
         self.slash_cooldown = 0
         self.direction = 1
         self.flip = False
@@ -53,10 +54,12 @@ class Player(pygame.sprite.Sprite):
         self.healthbar(screen)
         self.timeBar(screen)
         #update cooldown
-        if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
+        if self.shotgun_cooldown > 0:
+            self.shotgun_cooldown -= 1
         if self.slash_cooldown > 0:
             self.slash_cooldown -= 1
+        if self.sniper_cooldown > 0:
+            self.sniper_cooldown -= 1
         self.knockback(enemy)
 
     def move(self, moving_left, moving_right, moving_up, moving_down):
@@ -99,8 +102,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= self.knockback_cooldown
 
     def shootShotgun(self, mouse_x, mouse_y):
-        if self.shoot_cooldown == 0:
-            self.shoot_cooldown = 20
+        if self.shotgun_cooldown == 0:
+            self.shotgun_cooldown = 20
             for i in range(-2, 3):
                 bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), \
                     self.rect.centery, mouse_x, mouse_y)
@@ -109,8 +112,8 @@ class Player(pygame.sprite.Sprite):
                 bullet_group.add(bullet)
 
     def shootSniper(self, mouse_x, mouse_y):
-        if self.shoot_cooldown == 0:
-            self.shoot_cooldown = 60
+        if self.sniper_cooldown == 0:
+            self.sniper_cooldown = 120
             bullet = sniperBullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), \
                 self.rect.centery, mouse_x, mouse_y)
             sniperbullet_group.add(bullet)
