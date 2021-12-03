@@ -21,7 +21,8 @@ class Player(pygame.sprite.Sprite):
         self.direction = 1
         self.flip = False
 
-        self.timeCharge = 200
+        self.maxTimeCharge = 100
+        self.timeCharge = 100
 
         self.animation_list = []
         self.frame_index = 0
@@ -50,6 +51,7 @@ class Player(pygame.sprite.Sprite):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
+        self.timeBar(screen)
         #update cooldown
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
@@ -119,10 +121,26 @@ class Player(pygame.sprite.Sprite):
             slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             slash_group.add(slash)
 
-    #def slowTime(self, enemies, )
+    def slowTime(self, enemies, projectiles):
+        for enemy in enemies:
+            enemy.speed = 1
+        for projectile in projectiles:
+            projectile.speed = 2.5
+
+    def normalTime(self, enemies, projectiles):
+        for enemy in enemies:
+            enemy.speed = enemy.speed * 2
+        for projectile in projectiles:
+            projectile.speed = projectile.speed * 2
+
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
+
+    def timeBar(self, window):
+        pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+22, self.image.get_width(), 10))
+        pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+22, self.image.get_width() * \
+            (self.timeCharge/self.maxTimeCharge), 10))
 
     def update_animation(self):
         #update animation

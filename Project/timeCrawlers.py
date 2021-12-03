@@ -51,15 +51,14 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
-chaser = Chaser('enemy', 400, 200, 2, 1)
+chaser = Chaser('enemy', 400, 200, 2, 2)
+enemy_group.add(chaser)
 
 run = True
 while run:
     clock.tick(FPS)
 
     draw_bg()
-
-
 
     chaser.update(screen, player)
     chaser.draw(screen)
@@ -83,7 +82,6 @@ while run:
     projectiles.add(bullet_group.sprites())
     projectiles.add(slash_group.sprites())
     projectiles.add(sniperbullet_group.sprites())
-    print(len(projectiles));
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -96,7 +94,18 @@ while run:
             player.shootSniper(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
-    #    if slowingTime:
+
+        if slowingTime:
+            if player.timeCharge <= 0:
+                slowingTime = False
+            player.timeCharge -= 1
+            FPS = 30
+        else:
+            if player.timeCharge < player.maxTimeCharge:
+                player.timeCharge += .25
+            FPS = 60
+            #player.slowTime(enemy_group, projectiles)
+
 
         if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run

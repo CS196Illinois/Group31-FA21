@@ -9,8 +9,6 @@ class sniperBullet(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.speed = 20
         self.angle = math.atan2(y - mouse_y, x - mouse_x)
-        self.x_vel = math.cos(self.angle) * self.speed
-        self.y_vel = math.sin(self.angle) * self.speed
         self.image = pygame.transform.rotozoom(pygame.image.load('Project/assets/icons/bullet.png'), -math.degrees(math.atan2(mouse_y - y, mouse_x - x)), 1)
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -18,10 +16,19 @@ class sniperBullet(pygame.sprite.Sprite):
         self.mouse_y = mouse_y
 
         self.tracers = pygame.sprite.Group()
+        self.fromEnemy = False
 
         pygame.transform.rotozoom(self.image, self.angle, 1)
 
+    def updateSpeed(self):
+        self.x_vel = self.angle * self.speed
+        self.y_vel = self.angle * self.speed
+        self.rect.x -= int(self.x_vel)
+        self.rect.y -= int(self.y_vel)
+
     def update(self):
+        self.x_vel = math.cos(self.angle) * self.speed
+        self.y_vel = math.sin(self.angle) * self.speed
         self.rect.x -= int(self.x_vel)
         self.rect.y -= int(self.y_vel)
         tracer = Tracer(self.rect.x, self.rect.y, self)
