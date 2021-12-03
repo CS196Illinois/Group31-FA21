@@ -124,13 +124,13 @@ class Player(pygame.sprite.Sprite):
             slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
             slash_group.add(slash)
 
-    def slowTime(self, enemies, projectiles):
+    def slowTime(self, enemies, projectiles): # unused currently
         for enemy in enemies:
             enemy.speed = 1
         for projectile in projectiles:
             projectile.speed = 2.5
 
-    def normalTime(self, enemies, projectiles):
+    def normalTime(self, enemies, projectiles): # unused currently
         for enemy in enemies:
             enemy.speed = enemy.speed * 2
         for projectile in projectiles:
