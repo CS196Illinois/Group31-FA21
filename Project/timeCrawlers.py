@@ -98,8 +98,8 @@ while run:
         if slowingTime:
             if player.timeCharge <= 0:
                 slowingTime = False
-            player.timeCharge -= 1
-            FPS = 30
+            player.timeCharge -= .5
+            FPS = 25
         else:
             if player.timeCharge < player.maxTimeCharge:
                 player.timeCharge += .25
