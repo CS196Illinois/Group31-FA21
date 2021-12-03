@@ -2,6 +2,8 @@ import pygame
 from timePlayer import Player
 from timeEnemy import Enemy
 from timeChaser import Chaser
+from timeSniper import Sniper
+from timeGiant import Giant
 from timeWall import Wall
 from timeConfig import *
 
@@ -10,7 +12,6 @@ pygame.init()
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
 bg = pygame.image.load('Project/assets/tile/bg1.png')
-
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('time crawler')
@@ -44,7 +45,8 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
-chaser = Chaser('enemy', 400, 200, 2, 1)
+
+enemy = Giant('enemy', 600, 200, 4, 1)
 wall = Wall()
 
 run = True
@@ -56,14 +58,17 @@ while run:
     wall.draw_door(screen)
 
 
-    chaser.update(screen, player)
-    chaser.draw(screen)
-    player.update(screen, chaser)
+    enemy.update(screen, player)
+    enemy.draw(screen)
+    player.update(screen, enemy)
     player.draw(screen)
 
     #update and draw groups
     bullet_group.update()
     bullet_group.draw(screen)
+    
+    ebullet_group.update()
+    ebullet_group.draw(screen)
 
     sniperbullet_group.update()
     sniperbullet_group.draw(screen)
@@ -146,53 +151,3 @@ while run:
     pygame.display.update()
 
 pygame.quit()
-
-# import pygame
-# from player import player
-
-# # constants
-# WIDTH, HEIGHT = (900, 500)
-# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-# pygame.display.set_caption("Time Crawlers")
-
-# FPS = 60
-
-# WHITE = (255, 255, 255)
-
-# def draw_window(player): # draw and update the window
-#     WIN.fill(WHITE)
-#     WIN.blit(player.image, (player.rect.x, player.rect.y))
-#     for projectile in player.projectiles:
-#         WIN.blit(projectile.image, (projectile.rect.x, projectile.rect.y))
-#         pygame.transform.rotate(projectile.image, projectile.ANGLE)
-#     pygame.display.update()
-
-# def updatePlayerStatus(player):
-#     if player.attackTimer > 0:
-#         player.attackTimer -= 1
-
-# def main(): # main function
-#     clock = pygame.time.Clock()
-#     p = player()
-#     run = True
-
-#     while run:
-#         clock.tick(FPS)
-#         mx, my = pygame.mouse.get_pos()
-#         mouseClicked = pygame.mouse.get_pressed()
-#         if mouseClicked[0]:
-#             p.attack(mx, my)
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 run = False
-
-
-#         p.handle_input()
-#         p.handle_projectiles()
-#         updatePlayerStatus(p)
-#         draw_window(p)
-
-#     pygame.quit()
-
-# if __name__ == "__main__": # call main function
-#     main()

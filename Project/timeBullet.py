@@ -20,18 +20,16 @@ class Bullet(pygame.sprite.Sprite):
 
         pygame.transform.rotozoom(self.image, self.angle, 1)
 
-    def updateAngle(self):
+    def update(self):
         self.x_vel = math.cos(self.angle) * self.speed
         self.y_vel = math.sin(self.angle) * self.speed
         self.rect.x -= int(self.x_vel)
         self.rect.y -= int(self.y_vel)
-
-    def update(self):
-        self.updateAngle()
+        
         self.traveledDistance += 1
         if self.shotgunBullet and self.traveledDistance > 40:
             self.kill()
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.kill()
 
 # class Bullet(pygame.sprite.Sprite):

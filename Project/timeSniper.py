@@ -1,8 +1,9 @@
 import pygame
 import os
 from timeConfig import *
+from timeBullet import Bullet
 
-class Chaser(pygame.sprite.Sprite):
+class Sniper(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
@@ -10,7 +11,9 @@ class Chaser(pygame.sprite.Sprite):
         self.speed = speed
         self.health = 100
         self.max_health = self.health
-
+        
+        self.shoot_cooldown = 0
+        self.slash_cooldown = 0
         self.direction = 1
         self.flip = False
 
@@ -18,16 +21,16 @@ class Chaser(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
-
+        
         #load all images for the players
         animation_types = ['Idle', 'Run', 'Death']
         for animation in animation_types:
             #reset temporary list of images
             temp_list = []
             #count number of files in the folder
-            num_of_frames = len(os.listdir(f'Project/assets/{self.char_type}/{animation}'))
+            num_of_frames = len(os.listdir(f'assets/{self.char_type}/{animation}'))
             for i in range(num_of_frames):
-                img = pygame.image.load(f'Project/assets/{self.char_type}/{animation}/{i}.png').convert_alpha()
+                img = pygame.image.load(f'assets/{self.char_type}/{animation}/{i}.png').convert_alpha()
                 img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
                 temp_list.append(img)
             self.animation_list.append(temp_list)
@@ -41,21 +44,22 @@ class Chaser(pygame.sprite.Sprite):
         self.check_alive()
         self.healthbar(screen)
         self.move(player)
+        self.shoot(player)
+
+        #update cooldown
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
 
         hit_bullet = pygame.sprite.spritecollide(self, bullet_group, False)
-        hit_sniperbullet = pygame.sprite.spritecollide(self, sniperbullet_group, False)
         hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
 
         if hit_bullet:
             if self.alive:
-                self.health -= 10
+                self.health -= 1
                 bullet_group.remove(hit_bullet)
-        if hit_sniperbullet:
-            if self.alive:
-                self.health -= 100
         if hit_slash:
             if self.alive:
-                self.health -= 30
+                self.health -= 40
                 slash_group.remove(hit_slash)
 
     def move(self, player):
@@ -82,6 +86,13 @@ class Chaser(pygame.sprite.Sprite):
         else:
             self.update_action(2)
 
+    def shoot(self, player):
+        if self.alive:
+            if self.shoot_cooldown == 0:
+                self.shoot_cooldown = 120
+                bullet = Bullet(self.rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, player.rect.centerx, player.rect.centery)
+                ebullet_group.add(bullet)
+    
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))

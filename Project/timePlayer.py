@@ -51,12 +51,25 @@ class Player(pygame.sprite.Sprite):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
+        self.knockback(enemy)
+
         #update cooldown
         if self.shoot_cooldown > 0:
             self.shoot_cooldown -= 1
         if self.slash_cooldown > 0:
             self.slash_cooldown -= 1
-        self.knockback(enemy)
+        
+        hit_ebullet = pygame.sprite.spritecollide(self, ebullet_group, False)
+        # hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
+
+        if hit_ebullet:
+            if self.alive:
+                self.health -= 5
+                ebullet_group.remove(hit_ebullet)
+        # if hit_slash:
+        #     if self.alive:
+        #         self.health -= 40
+        #         slash_group.remove(hit_slash)
 
     def move(self, moving_left, moving_right, moving_up, moving_down):
         #reset movement variables
