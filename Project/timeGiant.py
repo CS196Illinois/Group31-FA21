@@ -66,7 +66,6 @@ class Giant(pygame.sprite.Sprite):
         if hit_sniperbullet:
             if self.alive:
                 self.health -= 100
-                sniperbullet_group.remove(hit_sniperbullet)
 
     def move(self, player):
         #reset movement variables

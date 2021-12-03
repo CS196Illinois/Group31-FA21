@@ -20,11 +20,6 @@ class sniperBullet(pygame.sprite.Sprite):
 
         pygame.transform.rotozoom(self.image, self.angle, 1)
 
-    def updateSpeed(self):
-        self.x_vel = self.angle * self.speed
-        self.y_vel = self.angle * self.speed
-        self.rect.x -= int(self.x_vel)
-        self.rect.y -= int(self.y_vel)
 
     def update(self):
         self.x_vel = math.cos(self.angle) * self.speed
@@ -33,5 +28,5 @@ class sniperBullet(pygame.sprite.Sprite):
         self.rect.y -= int(self.y_vel)
         tracer = Tracer(self.rect.x, self.rect.y, self)
         self.tracers.add(tracer)
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.kill()
