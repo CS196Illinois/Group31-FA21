@@ -4,11 +4,15 @@ from timeConfig import *
 from timeBullet import Bullet
 from timeSlash import Slash
 
-class Wall(pygame.sprite.Sprite):
+class Door(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
         self.char_type = char_type
+        self.health = 100
+        self.max_health = self.health
+
+        self.appear = false
 
         self.direction = 1
         self.flip = False
@@ -44,6 +48,10 @@ class Wall(pygame.sprite.Sprite):
         #update rectangle position
         self.rect.x += dx
         self.rect.y += dy
+
+    def healthbar(self, window):
+        pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
+        pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
 
     def update_animation(self):
         #update animation
