@@ -4,9 +4,14 @@ from timeEnemy import Enemy
 from timeChaser import Chaser
 from timeSniper import Sniper
 from timeGiant import Giant
+from timeWall import Wall
 from timeConfig import *
 
 pygame.init()
+
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
+bg = pygame.image.load('Project/assets/tile/bg1.png')
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('time crawler')
@@ -20,7 +25,8 @@ moving_left = False
 moving_right = False
 moving_up = False
 moving_down = False
-shoot = False
+shootShotgun = False
+shootSniper = False
 slash = False
 
 #define colours
@@ -29,16 +35,28 @@ RED = (255, 0, 0)
 
 def draw_bg():
     screen.fill(BG)
+    for i in range(3):
+        a = i * 200
+        for j in range(5):
+            b = j * 200
+            screen.blit(bg, (b,a))
+
+    #screen.blit(wall, (30, 0))
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
+
 enemy = Giant('enemy', 600, 200, 4, 1)
+wall = Wall()
 
 run = True
 while run:
     clock.tick(FPS)
 
     draw_bg()
+    wall.draw_wall(screen)
+    wall.draw_door(screen)
+
 
     enemy.update(screen, player)
     enemy.draw(screen)
@@ -52,6 +70,12 @@ while run:
     ebullet_group.update()
     ebullet_group.draw(screen)
 
+    sniperbullet_group.update()
+    sniperbullet_group.draw(screen)
+    for sniperbullet in sniperbullet_group:
+        sniperbullet.tracers.update()
+        sniperbullet.tracers.draw(screen)
+
     slash_group.update()
     slash_group.draw(screen)
 
@@ -59,12 +83,14 @@ while run:
 
     #update player actions
     if player.alive:
-        #shoot bullets
-        if shoot:
-            player.shoot(mouse_x, mouse_y)
+        # bullets
+        if shootShotgun:
+            player.shootShotgun(mouse_x, mouse_y)
+        elif shootSniper:
+            player.shootSniper(mouse_x, mouse_y)
         elif slash:
             player.slash(mouse_x, mouse_y)
-        
+
         if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
         else:
@@ -86,7 +112,7 @@ while run:
             if event.key == pygame.K_s:
                 moving_down = True
             # if event.key == pygame.K_SPACE:
-            #     shoot = True
+            #      = True
             if event.key == pygame.K_ESCAPE:
                 run = False
             if event.key == pygame.K_1:
@@ -95,13 +121,15 @@ while run:
                 player.equippedWeapon = "shotgun"
             if event.key == pygame.K_3:
                 player.equippedWeapon = "sniper"
-        
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if player.equippedWeapon == "slash":
                     slash = True
                 if player.equippedWeapon == "shotgun":
-                    shoot = True
+                    shootShotgun = True
+                if player.equippedWeapon == "sniper":
+                    shootSniper = True
 
 
         #keyboard button released
@@ -114,12 +142,11 @@ while run:
                 moving_up = False
             if event.key == pygame.K_s:
                 moving_down = False
-            if event.key == pygame.K_SPACE:
-                shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 slash = False
-                shoot = False
+                shootShotgun = False
+                shootSniper = False
 
     pygame.display.update()
 
