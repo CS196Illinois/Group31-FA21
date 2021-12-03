@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
 
-        self.touchDoor = false
+        #self.touchDoor = false
         self.level = 0
 
         self.equippedWeapon = "slash"

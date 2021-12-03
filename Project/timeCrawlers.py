@@ -10,8 +10,7 @@ pygame.init()
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
 bg = pygame.image.load('Project/assets/tile/bg1.png')
-wall1 = pygame.image.load('Project/assets/tile/7.png')
-wall2 = pygame.image.load('Project/assets/tile/4.png')
+
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('time crawler')
@@ -40,24 +39,21 @@ def draw_bg():
         for j in range(5):
             b = j * 200
             screen.blit(bg, (b,a))
-    for i in range(30):
-        a = i * 30
-        screen.blit(wall2, (a, 470))
-        screen.blit(wall2, (0, a))
-        screen.blit(wall2, (870, a))
-        screen.blit(wall1, (a, 0))
+
     #screen.blit(wall, (30, 0))
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
 chaser = Chaser('enemy', 400, 200, 2, 1)
+wall = Wall()
 
 run = True
 while run:
     clock.tick(FPS)
 
     draw_bg()
-
+    wall.draw_wall(screen)
+    wall.draw_door(screen)
 
 
     chaser.update(screen, player)
