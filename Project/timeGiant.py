@@ -1,8 +1,10 @@
 import pygame
 import os
+import random
 from timeConfig import *
+from timeBullet import Bullet
 
-class Chaser(pygame.sprite.Sprite):
+class Giant(pygame.sprite.Sprite):
     def __init__(self, char_type, x, y, scale, speed):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
@@ -11,6 +13,8 @@ class Chaser(pygame.sprite.Sprite):
         self.health = 100
         self.max_health = self.health
 
+        self.shoot_cooldown = 0
+        self.slash_cooldown = 0
         self.direction = 1
         self.flip = False
 
@@ -41,26 +45,32 @@ class Chaser(pygame.sprite.Sprite):
         self.check_alive()
         self.healthbar(screen)
         self.move(player)
+        self.shoot(player)
+
+        #update cooldown
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
 
         hit_bullet = pygame.sprite.spritecollide(self, bullet_group, False)
-        hit_sniperbullet = pygame.sprite.spritecollide(self, sniperbullet_group, False)
         hit_slash = pygame.sprite.spritecollide(self, slash_group, False)
+        hit_sniperbullet = pygame.sprite.spritecollide(self, sniperbullet_group, False)
 
         if hit_bullet:
             if self.alive:
-                self.health -= 20
+                self.health -= 1
                 bullet_group.remove(hit_bullet)
+        if hit_slash:
+            if self.alive:
+                self.health -= 40
+                slash_group.remove(hit_slash)
         if hit_sniperbullet:
             if self.alive:
                 self.health -= 100
-        if hit_slash:
-            if self.alive:
-                self.health -= 25
-                slash_group.remove(hit_slash)
+                sniperbullet_group.remove(hit_sniperbullet)
 
     def move(self, player):
         #reset movement variables
-        dx, dy = (player.rect.x-self.rect.x), (player.rect.y-self.rect.y)
+        dx, dy = (player.rect.centerx-self.rect.centerx), (player.rect.centery-self.rect.centery)
 
         if self.alive:
             if dx == 0 and dy == 0:
@@ -81,6 +91,21 @@ class Chaser(pygame.sprite.Sprite):
                 self.update_action(1)
         else:
             self.update_action(2)
+
+    def shoot(self, player):
+        if self.alive:
+            if self.shoot_cooldown == 0:
+                self.shoot_cooldown = 120
+                ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery,
+                    player.rect.centerx, player.rect.centery))
+                for i in range(2):
+                    randrange = random.randrange(100, 200)
+                    ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery,
+                        player.rect.centerx, player.rect.centery + randrange))
+                for i in range(2):
+                    randrange = random.randrange(100, 200)
+                    ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery,
+                        player.rect.centerx, player.rect.centery - randrange))
 
     def healthbar(self, window):
         pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))

@@ -3,31 +3,25 @@ import os
 from timeConfig import *
 from timeBullet import Bullet
 from timeSlash import Slash
-from timePlayer import Player
-from timeEnemy import Enemy
 
-class Wall(pygame.sprite.Sprite):
-    def __init__(self):
+class Door(pygame.sprite.Sprite):
+    def __init__(self, char_type, x, y, scale):
         pygame.sprite.Sprite.__init__(self)
-        #self.alive = True
+        self.alive = True
+        self.char_type = char_type
 
-        #self.animation_list = []
+        self.appear = false
+
+        self.direction = 1
+        self.flip = False
+
+        self.animation_list = []
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks()
 
-        self.wall_list = []
-        self.wall_list.append(pygame.image.load(f'Project/assets/tile/7.png').convert_alpha())
-        self.wall_list.append(pygame.image.load(f'Project/assets/tile/4.png').convert_alpha())
-
-        self.obstacle_list = []
-        for i in range(12, 15):
-            img = pygame.image.load(f'Project/assets/tile/{i}.png').convert_alpha()
-            self.obstacle_list.append(pygame.image.load(f'Project/assets/tile/7.png').convert_alpha())
-
-        self.door = pygame.image.load('Project/assets/tile/20.png')
         #load all images for the players
-        #animation_types = ['Idle', 'Run', 'Death']
+        animation_types = ['Idle', 'Run', 'Death']
         # for animation in animation_types:
         #     #reset temporary list of images
         #     temp_list = []
@@ -39,6 +33,9 @@ class Wall(pygame.sprite.Sprite):
         #         temp_list.append(img)
         #     self.animation_list.append(temp_list)
 
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
     def update(self, screen):
         self.update_animation()
@@ -75,28 +72,5 @@ class Wall(pygame.sprite.Sprite):
             self.update_time = pygame.time.get_ticks()
 
 
-    def draw_wall(self, screen):
-        '''
-        wall1 = pygame.image.load('Project/assets/tile/7.png')
-        wall2 = pygame.image.load('Project/assets/tile/4.png')
-        for i in range(30):
-            a = i * 30
-            screen.blit(wall2, (a, 470))
-            screen.blit(wall2, (0, a))
-            screen.blit(wall2, (870, a))
-            screen.blit(wall1, (a, 0))
-        '''
-        for i in range(30):
-            a = i * 30
-            screen.blit(self.wall_list[1], (a, 470))
-            screen.blit(self.wall_list[1], (0, a))
-            screen.blit(self.wall_list[1], (870, a))
-            screen.blit(self.wall_list[0], (a, 0))
-
-
-
-    def draw_door(self, screen):
-        for i in range(1, 4):
-            a = i * 30
-            screen.blit(self.door, (900 - a, 210))
-            screen.blit(self.door, (900 - a, 330))
+    def draw(self, screen):
+        screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)

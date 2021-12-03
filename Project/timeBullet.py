@@ -28,7 +28,7 @@ class Bullet(pygame.sprite.Sprite):
         self.traveledDistance += 1
         if self.shotgunBullet and self.traveledDistance > 30:
             self.kill()
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
+        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH or self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.kill()
 
 # class Bullet(pygame.sprite.Sprite):
