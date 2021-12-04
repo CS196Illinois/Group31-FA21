@@ -92,7 +92,7 @@ class Giant(pygame.sprite.Sprite):
             self.update_action(2)
 
     def shoot(self, player):
-        if self.alive:
+        if self.alive and player.alive:
             if self.shoot_cooldown == 0:
                 self.shoot_cooldown = 120
                 ebullet_group.add(Bullet(self.rect.centerx * self.direction, self.rect.centery,

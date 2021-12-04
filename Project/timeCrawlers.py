@@ -9,8 +9,6 @@ from timeConfig import *
 
 pygame.init()
 
-SCREEN_WIDTH = 900
-SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
 bg = pygame.image.load('Project/assets/tile/bg1.png')
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -51,6 +49,14 @@ enemy_group.add(Chaser('enemy', 650, 200, 2, 2))
 enemy_group.add(Sniper('enemy', 700, 200, 2, 2))
 enemy_group.add(Giant('enemy', 600, 200, 4, 1))
 
+# list of groups not pygame
+# invincibility cooldown
+enemy_list = []
+enemy_list.append(Chaser('enemy', 650, 200, 2, 2))
+enemy_list.append(Sniper('enemy', 700, 200, 2, 2))
+enemy_list.append(Giant('enemy', 600, 200, 4, 1))
+enemy_count = 0
+
 wall = Wall()
 run = True
 while run:
@@ -59,12 +65,23 @@ while run:
     draw_bg()
     wall.draw_wall(screen)
     wall.draw_door(screen)
-    
-    for enemy in enemy_group.sprites():
+
+    for enemy in enemy_list:
         enemy.update(screen, player)
         enemy.draw(screen)
+        enemy_count += enemy.alive
+        player.update(screen, enemy)
+    # all the enemies are dead
+    if (enemy_count == 0):
+        print("clear")
+    enemy_count = 0
+    
+    # for enemy in enemy_group.sprites():
+    #     enemy.update(screen, player)
+    #     enemy.draw(screen)
+    #     if (not enemy.alive):
+    #         enemy_group.remove(enemy)
 
-    player.update(screen, enemy)
     player.draw(screen)
 
     #update and draw groups
