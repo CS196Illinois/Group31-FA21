@@ -5,6 +5,10 @@ from timeChaser import Chaser
 from timeSniper import Sniper
 from timeGiant import Giant
 from timeWall import Wall
+from sniperPickup import sniperItem
+from shotgunPickup import shotgunItem
+from medkit import medkit
+from ragePowerup import ragePowerup
 from timeConfig import *
 
 pygame.init()
@@ -44,6 +48,14 @@ def draw_bg():
     # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
 
 player = Player('player', 200, 200, 2, 5)
+sniper = sniperItem(400, 200)
+shotgun = shotgunItem(400, 300)
+medkit = medkit(400, 400)
+ragePowerup = ragePowerup(400, 100)
+item_group.add(shotgun)
+item_group.add(sniper)
+item_group.add(medkit)
+item_group.add(ragePowerup)
 
 enemy_group.add(Chaser('enemy', 650, 200, 2, 2))
 enemy_group.add(Sniper('enemy', 700, 200, 2, 2))
@@ -75,7 +87,7 @@ while run:
     if (enemy_count == 0):
         print("clear")
     enemy_count = 0
-    
+
     # for enemy in enemy_group.sprites():
     #     enemy.update(screen, player)
     #     enemy.draw(screen)
@@ -83,6 +95,9 @@ while run:
     #         enemy_group.remove(enemy)
 
     player.draw(screen)
+
+    item_group.update(player)
+    item_group.draw(screen)
 
     #update and draw groups
     bullet_group.update()
@@ -120,7 +135,7 @@ while run:
         if slowingTime:
             if player.timeCharge <= 0:
                 slowingTime = False
-            player.timeCharge -= .5
+            player.timeCharge -= 2
             FPS = 25
         else:
             if player.timeCharge < player.maxTimeCharge:
@@ -149,7 +164,7 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and player.timeCharge >= 40:
                 if (slowingTime == False):
                     slowingTime = True
                 else:
@@ -158,9 +173,9 @@ while run:
                 run = False
             if event.key == pygame.K_1:
                 player.equippedWeapon = "slash"
-            if event.key == pygame.K_2:
+            if event.key == pygame.K_2 and "shotgun" in player.ownedWeapons:
                 player.equippedWeapon = "shotgun"
-            if event.key == pygame.K_3:
+            if event.key == pygame.K_3 and "sniper" in player.ownedWeapons:
                 player.equippedWeapon = "sniper"
 
         if event.type == pygame.MOUSEBUTTONDOWN:
