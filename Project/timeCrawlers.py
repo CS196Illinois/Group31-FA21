@@ -33,19 +33,32 @@ slash = False
 slowingTime = False
 
 #define colours
-BG = (155, 155, 155)
+#BG = (155, 155, 155)
 RED = (255, 0, 0)
 
 def draw_bg():
-    screen.fill(BG)
+    #screen.fill(BG)
     for i in range(3):
         a = i * 200
         for j in range(5):
             b = j * 200
             screen.blit(bg, (b,a))
 
-    #screen.blit(wall, (30, 0))
-    # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
+walls_list = []
+for i in range(30):
+    a = i * 30
+    wall = Wall(1, a, 470)
+    walls_list.append(wall)
+
+    wall = Wall(1, 0, a)
+    walls_list.append(wall)
+
+    wall = Wall(1, 870, a)
+    walls_list.append(wall)
+
+    wall = Wall(0, a, 0)
+    walls_list.append(wall)
+
 
 player = Player('player', 200, 200, 2, 5)
 sniper = sniperItem(400, 200)
@@ -69,13 +82,15 @@ enemy_list.append(Sniper('enemy', 700, 200, 2, 2))
 enemy_list.append(Giant('enemy', 600, 200, 4, 1))
 enemy_count = 0
 
-wall = Wall()
+#wall = Wall()
 run = True
 while run:
     clock.tick(FPS)
 
     draw_bg()
-    wall.draw_wall(screen)
+    for i in walls_list:
+        i.draw_wall(screen)
+    #wall.draw_wall(screen)
     wall.draw_door(screen)
 
     for enemy in enemy_list:

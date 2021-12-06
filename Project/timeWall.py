@@ -7,23 +7,24 @@ from timePlayer import Player
 from timeEnemy import Enemy
 
 class Wall(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, type, x, y):
         pygame.sprite.Sprite.__init__(self)
-        #self.alive = True
+        self.type = type
+        self.x = x
+        self.y = y
 
-        #self.animation_list = []
-        self.frame_index = 0
-        self.action = 0
         self.update_time = pygame.time.get_ticks()
 
         self.wall_list = []
         self.wall_list.append(pygame.image.load(f'Project/assets/tile/7.png').convert_alpha())
         self.wall_list.append(pygame.image.load(f'Project/assets/tile/4.png').convert_alpha())
+        self.image = self.wall_list[type]
+        self.rect = self.image.get_rect()
 
         self.obstacle_list = []
         for i in range(12, 15):
             img = pygame.image.load(f'Project/assets/tile/{i}.png').convert_alpha()
-            self.obstacle_list.append(pygame.image.load(f'Project/assets/tile/7.png').convert_alpha())
+            self.obstacle_list.append(img)
 
         self.door = pygame.image.load('Project/assets/tile/20.png')
         #load all images for the players
@@ -85,14 +86,15 @@ class Wall(pygame.sprite.Sprite):
             screen.blit(wall2, (0, a))
             screen.blit(wall2, (870, a))
             screen.blit(wall1, (a, 0))
-        '''
+
         for i in range(30):
             a = i * 30
             screen.blit(self.wall_list[1], (a, 470))
             screen.blit(self.wall_list[1], (0, a))
             screen.blit(self.wall_list[1], (870, a))
             screen.blit(self.wall_list[0], (a, 0))
-
+        '''
+        screen.blit(self.wall_list[self.type], (self.x, self.y))
 
 
     def draw_door(self, screen):
