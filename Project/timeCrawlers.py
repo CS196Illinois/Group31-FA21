@@ -5,6 +5,7 @@ from timeChaser import Chaser
 from timeSniper import Sniper
 from timeGiant import Giant
 from timeWall import Wall
+from timeObstacles import Obstacle
 from sniperPickup import sniperItem
 from shotgunPickup import shotgunItem
 from medkit import medkit
@@ -59,6 +60,13 @@ for i in range(30):
     wall = Wall(0, a, 0)
     walls_list.append(wall)
 
+#indices: crate = 0, rock = 1,
+obstacles_list = []
+obstacles_list.append(Obstacle(0, 10, 100))
+obstacles_list.append(Obstacle(1, 500, 30))
+obstacles_list.append(Obstacle(2, 60, 700))
+
+
 
 player = Player('player', 200, 200, 2, 5)
 sniper = sniperItem(400, 200)
@@ -82,7 +90,6 @@ enemy_list.append(Sniper('enemy', 700, 200, 2, 2))
 enemy_list.append(Giant('enemy', 600, 200, 4, 1))
 enemy_count = 0
 
-#wall = Wall()
 run = True
 while run:
     clock.tick(FPS)
@@ -92,6 +99,9 @@ while run:
         i.draw_wall(screen)
     #wall.draw_wall(screen)
     wall.draw_door(screen)
+
+    for i in obstacles_list:
+        i.draw_obstacle(screen)
 
     for enemy in enemy_list:
         enemy.update(screen, player)

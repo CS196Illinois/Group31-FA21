@@ -77,23 +77,6 @@ class Wall(pygame.sprite.Sprite):
 
 
     def draw_wall(self, screen):
-        '''
-        wall1 = pygame.image.load('Project/assets/tile/7.png')
-        wall2 = pygame.image.load('Project/assets/tile/4.png')
-        for i in range(30):
-            a = i * 30
-            screen.blit(wall2, (a, 470))
-            screen.blit(wall2, (0, a))
-            screen.blit(wall2, (870, a))
-            screen.blit(wall1, (a, 0))
-
-        for i in range(30):
-            a = i * 30
-            screen.blit(self.wall_list[1], (a, 470))
-            screen.blit(self.wall_list[1], (0, a))
-            screen.blit(self.wall_list[1], (870, a))
-            screen.blit(self.wall_list[0], (a, 0))
-        '''
         screen.blit(self.wall_list[self.type], (self.x, self.y))
 
 
