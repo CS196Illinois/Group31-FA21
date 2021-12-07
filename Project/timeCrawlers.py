@@ -1,4 +1,5 @@
 import pygame
+import random
 from timePlayer import Player
 from timeEnemy import Enemy
 from timeChaser import Chaser
