@@ -63,6 +63,16 @@ class Player(pygame.sprite.Sprite):
         self.knockback(enemy, spriteGroup)
         self.timeBar(screen)
 
+        if self.rect.x < 0:
+            self.rect.x = 40
+        if self.rect.x > 900:
+            self.rect.x = 860
+        if self.rect.y < 0:
+            self.rect.y = 40
+        if self.rect.y > 500:
+            self.rect.y = 460
+
+
         #update cooldown
         if self.rageCooldown <= 0:
             self.cooldownRate = 1
@@ -163,21 +173,14 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect.x -= self.knockback_cooldown
             i = True
-        if pygame.sprite.spritecollideany(self, spriteGroup):
-            if i:
-                self.rect.x += self.knockback_cooldown
-            else:
-                self.rect.x -= self.knockback_cooldown
+
         if (self.rect.y-enemy.rect.y) > 0:
             self.rect.y += self.knockback_cooldown
         else:
             self.rect.y -= self.knockback_cooldown
             i = True
-        if pygame.sprite.spritecollideany(self, spriteGroup):
-            if i:
-                self.rect.x += self.knockback_cooldown
-            else:
-                self.rect.x -= self.knockback_cooldown
+        
+
 
 
     def shootShotgun(self, mouse_x, mouse_y):
