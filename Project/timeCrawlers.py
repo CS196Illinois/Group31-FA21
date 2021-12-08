@@ -174,7 +174,7 @@ while run:
             player.update_action(1)#1: run
         else:
             player.update_action(0)#0: idle
-        player.move(moving_left, moving_right, moving_up, moving_down, wall_list)
+        player.move(moving_left, moving_right, moving_up, moving_down, walls_list)
 
     for event in pygame.event.get():
         #quit game
