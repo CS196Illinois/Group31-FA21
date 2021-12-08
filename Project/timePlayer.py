@@ -121,20 +121,22 @@ class Player(pygame.sprite.Sprite):
 
 
         #update rectangle position
-        px = self.rect.x
-        py = self.rect.y
+        px = self.get_rect().x
+        py = self.get_rect().y
 
         self.rect.x += dx
         self.rect.y += dy
 
         if pygame.sprite.spritecollideany(self, enemy_group):
-            if mx and my:
-                self.rect.x = px
-                self.rect.y = py
-            if mx:
-                self.rect.x = px
-            if my:
-                self.rect.y = py
+            self.rect.x = px
+            self.rect.y = py
+            # if mx and my:
+            #     self.rect.x = px
+            #     self.rect.y = py
+            # if mx:
+            #     self.rect.x = px
+            # if my:
+            #     self.rect.y = py
 
     def knockback(self, enemy):
         if self.alive and enemy.alive:
