@@ -93,13 +93,18 @@ class Player(pygame.sprite.Sprite):
         if self.health > self.max_health:
             self.health = self.max_health
 
-    def move(self, moving_left, moving_right, moving_up, moving_down, enemy_group):
+    def move(self, moving_left, moving_right, moving_up, moving_down, spriteGroup):
         #reset movement variables
         dx, dy = 0, 0
         mx, my = False, False
 
         #assign movement variables if moving left or right
         if moving_left:
+            for i in spriteGroup:
+                if self.rect.colliderect(i.rect):
+                    self.rect.x -= dx
+                    self.rect.y -= dy
+                    print(i.rect)
             dx = -self.speed
             self.flip = True
             self.direction = -1
@@ -121,15 +126,23 @@ class Player(pygame.sprite.Sprite):
 
 
         #update rectangle position
-        px = self.get_rect().x
-        py = self.get_rect().y
+        px = self.rect.x
+        py = self.rect.y
 
         self.rect.x += dx
         self.rect.y += dy
 
-        if pygame.sprite.spritecollideany(self, enemy_group):
-            self.rect.x = px
-            self.rect.y = py
+        for i in spriteGroup:
+            if self.rect.colliderect(i.rect):
+                self.rect.x -= dx
+                self.rect.y -= dy
+                print(i.rect)
+        '''
+        if pygame.sprite.spritecollide(self, spriteGroup, False):
+            self.rect.x -= dx
+            self.rect.y -= dy
+            print("hiiiiiiiiii")
+        '''
             # if mx and my:
             #     self.rect.x = px
             #     self.rect.y = py

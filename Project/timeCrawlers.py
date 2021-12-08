@@ -46,27 +46,34 @@ def draw_bg():
             b = j * 200
             screen.blit(bg, (b,a))
 
+wallG = pygame.sprite.Group()
+
 walls_list = []
 for i in range(30):
     a = i * 30
     wall = Wall(1, a, 470)
     walls_list.append(wall)
+    wallG.add(wall)
 
     wall = Wall(1, 0, a)
     walls_list.append(wall)
+    wallG.add(wall)
 
     wall = Wall(1, 870, a)
     walls_list.append(wall)
+    wallG.add(wall)
 
     wall = Wall(0, a, 0)
     walls_list.append(wall)
+    wallG.add(wall)
 
+'''
 #indices: crate = 0, rock = 1,
 obstacles_list = []
 obstacles_list.append(Obstacle(0, 10, 100))
 obstacles_list.append(Obstacle(1, 500, 30))
 obstacles_list.append(Obstacle(2, 60, 700))
-
+'''
 
 
 player = Player('player', 200, 200, 2, 5)
@@ -101,8 +108,8 @@ while run:
     #wall.draw_wall(screen)
     wall.draw_door(screen)
 
-    for i in obstacles_list:
-        i.draw_obstacle(screen)
+    #for i in obstacles_list:
+        #i.draw_obstacle(screen)
 
     for enemy in enemy_list:
         enemy.update(screen, player)
@@ -174,7 +181,7 @@ while run:
             player.update_action(1)#1: run
         else:
             player.update_action(0)#0: idle
-        player.move(moving_left, moving_right, moving_up, moving_down, walls_list)
+        player.move(moving_left, moving_right, moving_up, moving_down, wallG)
 
     for event in pygame.event.get():
         #quit game
