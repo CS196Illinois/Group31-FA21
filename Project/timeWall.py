@@ -20,6 +20,7 @@ class Wall(pygame.sprite.Sprite):
         self.wall_list.append(pygame.image.load(f'Project/assets/tile/4.png').convert_alpha())
         self.image = self.wall_list[type]
         self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
         self.obstacle_list = []
         for i in range(12, 15):

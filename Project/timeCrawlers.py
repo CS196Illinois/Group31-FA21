@@ -105,6 +105,7 @@ while run:
     draw_bg()
     for i in walls_list:
         i.draw_wall(screen)
+        print()
     #wall.draw_wall(screen)
     wall.draw_door(screen)
 
@@ -115,7 +116,7 @@ while run:
         enemy.update(screen, player)
         enemy.draw(screen)
         enemy_count += enemy.alive
-        player.update(screen, enemy)
+        player.update(screen, enemy, wallG)
     # all the enemies are dead
     if (enemy_count == 0):
         print("clear")

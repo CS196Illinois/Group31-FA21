@@ -56,11 +56,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def update(self, screen, enemy):
+    def update(self, screen, enemy, spriteGroup):
         self.update_animation()
         self.check_alive()
         self.healthbar(screen)
-        self.knockback(enemy)
+        self.knockback(enemy, spriteGroup)
         self.timeBar(screen)
 
         #update cooldown
@@ -96,47 +96,39 @@ class Player(pygame.sprite.Sprite):
     def move(self, moving_left, moving_right, moving_up, moving_down, spriteGroup):
         #reset movement variables
         dx, dy = 0, 0
-        mx, my = False, False
 
         #assign movement variables if moving left or right
         if moving_left:
-            for i in spriteGroup:
-                if self.rect.colliderect(i.rect):
-                    self.rect.x -= dx
-                    self.rect.y -= dy
-                    print(i.rect)
             dx = -self.speed
             self.flip = True
             self.direction = -1
-            mx = True
+
 
         if moving_right:
             dx = self.speed
             self.flip = False
             self.direction = 1
-            mx = True
 
         if moving_up:
             dy = -self.speed
-            my = True
+
 
         if moving_down:
             dy = self.speed
-            my = True
+
 
 
         #update rectangle position
-        px = self.rect.x
-        py = self.rect.y
-
         self.rect.x += dx
         self.rect.y += dy
+
+        print(spriteGroup)
 
         for i in spriteGroup:
             if self.rect.colliderect(i.rect):
                 self.rect.x -= dx
                 self.rect.y -= dy
-                print(i.rect)
+                #print(i.rect)
         '''
         if pygame.sprite.spritecollide(self, spriteGroup, False):
             self.rect.x -= dx
@@ -151,7 +143,7 @@ class Player(pygame.sprite.Sprite):
             # if my:
             #     self.rect.y = py
 
-    def knockback(self, enemy):
+    def knockback(self, enemy, spriteGroup):
         if self.alive and enemy.alive:
             if self.rect.colliderect(enemy.rect):
                 if self.invins_cooldown == 0:
@@ -164,14 +156,29 @@ class Player(pygame.sprite.Sprite):
 
         if self.knockback_cooldown > 0:
             self.knockback_cooldown -= 1
+
+        i = False
         if (self.rect.x-enemy.rect.x) > 0:
             self.rect.x += self.knockback_cooldown
         else:
             self.rect.x -= self.knockback_cooldown
+            i = True
+        if pygame.sprite.spritecollideany(self, spriteGroup):
+            if i:
+                self.rect.x += self.knockback_cooldown
+            else:
+                self.rect.x -= self.knockback_cooldown
         if (self.rect.y-enemy.rect.y) > 0:
             self.rect.y += self.knockback_cooldown
         else:
             self.rect.y -= self.knockback_cooldown
+            i = True
+        if pygame.sprite.spritecollideany(self, spriteGroup):
+            if i:
+                self.rect.x += self.knockback_cooldown
+            else:
+                self.rect.x -= self.knockback_cooldown
+
 
     def shootShotgun(self, mouse_x, mouse_y):
         if self.shotgun_cooldown <= 0:
