@@ -1,11 +1,21 @@
 import pygame
-import os
-import math
+import random
+from timePlayer import Player
+from timeEnemy import Enemy
+from timeChaser import Chaser
+from timeSniper import Sniper
+from timeGiant import Giant
+from timeWall import Wall
+from timeObstacles import Obstacle
+from sniperPickup import sniperItem
+from shotgunPickup import shotgunItem
+from medkit import medkit
+from ragePowerup import ragePowerup
+from timeConfig import *
 
 pygame.init()
 
-SCREEN_WIDTH = 900
-SCREEN_HEIGHT = int(SCREEN_WIDTH * 5/9)
+bg = pygame.image.load('Project/assets/tile/bg1.png')
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('time crawler')
@@ -19,237 +29,160 @@ moving_left = False
 moving_right = False
 moving_up = False
 moving_down = False
-shoot = False
+shootShotgun = False
+shootSniper = False
 slash = False
-
-#load images
-#bullet
-bullet_img = pygame.image.load('assets/icons/bullet.png').convert_alpha()
-#slash
-slash_img = pygame.image.load('assets/icons/slash.png').convert_alpha()
+slowingTime = False
 
 #define colours
-BG = (155, 155, 155)
+#BG = (155, 155, 155)
 RED = (255, 0, 0)
 
-mouse_x, mouse_y = 0, 0
-
 def draw_bg():
-    screen.fill(BG)
-    # pygame.draw.line(screen, RED, (0, 300), (SCREEN_WIDTH, 300))
+    #screen.fill(BG)
+    for i in range(3):
+        a = i * 200
+        for j in range(5):
+            b = j * 200
+            screen.blit(bg, (b,a))
 
-class Soldier(pygame.sprite.Sprite):
-    def __init__(self, char_type, x, y, scale, speed):
-        pygame.sprite.Sprite.__init__(self)
-        self.alive = True
-        self.char_type = char_type
-        self.speed = speed
-        self.health = 100
-        self.max_health = self.health
-        
-        self.shoot_cooldown = 0
-        self.slash_cooldown = 0
-        self.direction = 1
-        self.flip = False
+wallG = pygame.sprite.Group()
 
-        self.animation_list = []
-        self.frame_index = 0
-        self.action = 0
-        self.update_time = pygame.time.get_ticks()
-        
-        #load all images for the players
-        animation_types = ['Idle', 'Run', 'Death']
-        for animation in animation_types:
-            #reset temporary list of images
-            temp_list = []
-            #count number of files in the folder
-            num_of_frames = len(os.listdir(f'assets/{self.char_type}/{animation}'))
-            for i in range(num_of_frames):
-                img = pygame.image.load(f'assets/{self.char_type}/{animation}/{i}.png').convert_alpha()
-                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
-                temp_list.append(img)
-            self.animation_list.append(temp_list)
+walls_list = []
+for i in range(30):
+    a = i * 30
+    wall = Wall(1, a, 470)
+    walls_list.append(wall)
+    wallG.add(wall)
 
-        self.image = self.animation_list[self.action][self.frame_index]
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+    wall = Wall(1, 0, a)
+    walls_list.append(wall)
+    wallG.add(wall)
 
-    def update(self):
-        self.update_animation()
-        self.check_alive()
-        self.healthbar(screen)
-        #update cooldown
-        if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
-        if self.slash_cooldown > 0:
-            self.slash_cooldown -= 1
+    wall = Wall(1, 870, a)
+    walls_list.append(wall)
+    wallG.add(wall)
 
-    def move(self, moving_left, moving_right, moving_up, moving_down):
-        #reset movement variables
-        dx, dy = 0, 0
+    wall = Wall(0, a, 0)
+    walls_list.append(wall)
+    wallG.add(wall)
 
-        #assign movement variables if moving left or right
-        if moving_left:
-            dx = -self.speed
-            self.flip = True
-            self.direction = -1
-        if moving_right:
-            dx = self.speed
-            self.flip = False
-            self.direction = 1
-        if moving_up:
-            dy = -self.speed
-        if moving_down:
-            dy = self.speed
-
-        #update rectangle position
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def shoot(self):
-        if self.shoot_cooldown == 0:
-            self.shoot_cooldown = 20
-            bullet = Bullet(self
-            .rect.centerx + (0.6 * self.rect.size[0] * self.direction), self.rect.centery, self.direction)
-            bullet_group.add(bullet)
-    
-    def slash(self):
-        if self.slash_cooldown == 0:
-            self.slash_cooldown = 40
-            slash = Slash(self.rect.centerx, self.rect.centery, mouse_x, mouse_y)
-            slash_group.add(slash)
-    
-    def healthbar(self, window):
-        pygame.draw.rect(window, (255, 0, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width(), 10))
-        pygame.draw.rect(window, (0, 255, 0), (self.rect.x, self.rect.y + self.image.get_height()+10, self.image.get_width() * (self.health/self.max_health), 10))
-
-    def update_animation(self):
-        #update animation
-        ANIMATION_COOLDOWN = 100
-        #update image depending on current frame
-        self.image = self.animation_list[self.action][self.frame_index]
-        #check if enough time has passed since the last update
-        if pygame.time.get_ticks() - self.update_time > ANIMATION_COOLDOWN:
-            self.update_time = pygame.time.get_ticks()
-            self.frame_index += 1
-        #if the animation has run out the reset back to the start
-        if self.frame_index >= len(self.animation_list[self.action]):
-            if self.action == 2:
-                self.frame_index = len(self.animation_list[self.action]) - 1
-            else:
-                self.frame_index = 0
-
-    def update_action(self, new_action):
-        #check if the new action is different to the previous one
-        if new_action != self.action:
-            self.action = new_action
-            #update the animation settings
-            self.frame_index = 0
-            self.update_time = pygame.time.get_ticks()
-
-    def check_alive(self):
-        if self.health <= 0:
-            self.health = 0
-            self.speed = 0
-            self.alive = False
-            self.update_action(2)
-
-    def draw(self):
-        screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
-
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction):
-        pygame.sprite.Sprite.__init__(self)
-        self.speed = 10
-        self.image = bullet_img
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.direction = direction
-
-    def update(self):
-        #move bullet
-        self.rect.x += (self.direction * self.speed)
-        #check if bullet has gone off screen
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
-            self.kill()
-
-        #check collision with characters
-        # if pygame.sprite.spritecollide(player, bullet_group, False):
-        #     if player.alive:
-        #         player.health -= 5
-        #         self.kill()
-        if pygame.sprite.spritecollide(enemy, bullet_group, False):
-            if enemy.alive:
-                enemy.health -= 25
-                self.kill()
-
-class Slash(pygame.sprite.Sprite):
-    def __init__(self, x, y, mouse_x, mouse_y):
-        pygame.sprite.Sprite.__init__(self)
-        self.speed = 5
-        self.angle = math.atan2(y - mouse_y, x - mouse_x)
-        self.x_vel = math.cos(self.angle) * self.speed
-        self.y_vel = math.sin(self.angle) * self.speed
-        self.image = pygame.transform.rotozoom(slash_img, -math.degrees(math.atan2(mouse_y - y, mouse_x - x)), 1)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.mouse_x = mouse_x
-        self.mouse_y = mouse_y
-
-        pygame.transform.rotozoom(self.image, self.angle, 1)
-    
-    def update(self):
-        self.rect.x -= int(self.x_vel)
-        self.rect.y -= int(self.y_vel)
-        if self.rect.right < 0 or self.rect.left > SCREEN_WIDTH:
-            self.kill()
-        if pygame.sprite.spritecollide(enemy, slash_group, False):
-            if enemy.alive:
-                enemy.health -= 40
-                self.kill()
+'''
+#indices: crate = 0, rock = 1,
+obstacles_list = []
+obstacles_list.append(Obstacle(0, 10, 100))
+obstacles_list.append(Obstacle(1, 500, 30))
+obstacles_list.append(Obstacle(2, 60, 700))
+'''
 
 
-#create sprite groups
-bullet_group = pygame.sprite.Group()
-slash_group = pygame.sprite.Group()
+player = Player('player', 200, 200, 2, 5)
+sniper = sniperItem(400, 200)
+shotgun = shotgunItem(400, 300)
+medkit = medkit(400, 400)
+ragePowerup = ragePowerup(400, 100)
+item_group.add(shotgun)
+item_group.add(sniper)
+item_group.add(medkit)
+item_group.add(ragePowerup)
 
-player = Soldier('player', 200, 200, 2, 5)
-enemy = Soldier('enemy', 400, 200, 2, 5)
+enemy_group.add(Chaser('enemy', 650, 200, 2, 2))
+enemy_group.add(Sniper('enemy', 700, 200, 2, 2))
+enemy_group.add(Giant('enemy', 600, 200, 4, 1))
+
+# list of groups not pygame
+# invincibility cooldown
+enemy_list = []
+enemy_list.append(Chaser('enemy', 650, 200, 2, 2))
+enemy_list.append(Sniper('enemy', 700, 200, 2, 2))
+enemy_list.append(Giant('enemy', 600, 200, 4, 1))
+enemy_count = 0
 
 run = True
 while run:
-
     clock.tick(FPS)
 
     draw_bg()
+    for i in walls_list:
+        i.draw_wall(screen)
+        print()
+    #wall.draw_wall(screen)
+    wall.draw_door(screen)
 
-    player.update()
-    player.draw()
+    #for i in obstacles_list:
+        #i.draw_obstacle(screen)
 
-    enemy.update()
-    enemy.draw()
+    for enemy in enemy_list:
+        enemy.update(screen, player)
+        enemy.draw(screen)
+        enemy_count += enemy.alive
+        player.update(screen, enemy, wallG)
+    # all the enemies are dead
+    if (enemy_count == 0):
+        print("clear")
+    enemy_count = 0
+
+    # for enemy in enemy_group.sprites():
+    #     enemy.update(screen, player)
+    #     enemy.draw(screen)
+    #     if (not enemy.alive):
+    #         enemy_group.remove(enemy)
+
+    player.draw(screen)
+
+    item_group.update(player)
+    item_group.draw(screen)
 
     #update and draw groups
     bullet_group.update()
     bullet_group.draw(screen)
 
+    ebullet_group.update()
+    ebullet_group.draw(screen)
+
+    sniperbullet_group.update()
+    sniperbullet_group.draw(screen)
+    for sniperbullet in sniperbullet_group:
+        sniperbullet.tracers.update()
+        sniperbullet.tracers.draw(screen)
+
     slash_group.update()
     slash_group.draw(screen)
+
+    projectiles = pygame.sprite.Group()
+    projectiles.add(bullet_group.sprites())
+    projectiles.add(slash_group.sprites())
+    projectiles.add(sniperbullet_group.sprites())
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
 
     #update player actions
     if player.alive:
-        #shoot bullets
-        if shoot:
-            player.shoot()
+        # bullets
+        if shootShotgun:
+            player.shootShotgun(mouse_x, mouse_y)
+        elif shootSniper:
+            player.shootSniper(mouse_x, mouse_y)
         elif slash:
-            player.slash()
-        elif moving_left or moving_right or moving_up or moving_down:
+            player.slash(mouse_x, mouse_y)
+
+        if slowingTime:
+            if player.timeCharge <= 0:
+                slowingTime = False
+            player.timeCharge -= 2
+            FPS = 25
+        else:
+            if player.timeCharge < player.maxTimeCharge:
+                player.timeCharge += .25
+            FPS = 60
+            #player.slowTime(enemy_group, projectiles)
+
+
+        if moving_left or moving_right or moving_up or moving_down:
             player.update_action(1)#1: run
         else:
             player.update_action(0)#0: idle
-        player.move(moving_left, moving_right, moving_up, moving_down)
+        player.move(moving_left, moving_right, moving_up, moving_down, wallG)
 
     for event in pygame.event.get():
         #quit game
@@ -265,13 +198,28 @@ while run:
                 moving_up = True
             if event.key == pygame.K_s:
                 moving_down = True
-            if event.key == pygame.K_SPACE:
-                shoot = True
+            if event.key == pygame.K_SPACE and player.timeCharge >= 40:
+                if (slowingTime == False):
+                    slowingTime = True
+                else:
+                    slowingTime = False
             if event.key == pygame.K_ESCAPE:
                 run = False
+            if event.key == pygame.K_1:
+                player.equippedWeapon = "slash"
+            if event.key == pygame.K_2 and "shotgun" in player.ownedWeapons:
+                player.equippedWeapon = "shotgun"
+            if event.key == pygame.K_3 and "sniper" in player.ownedWeapons:
+                player.equippedWeapon = "sniper"
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                slash = True
+                if player.equippedWeapon == "slash":
+                    slash = True
+                if player.equippedWeapon == "shotgun":
+                    shootShotgun = True
+                if player.equippedWeapon == "sniper":
+                    shootSniper = True
 
 
         #keyboard button released
@@ -284,63 +232,12 @@ while run:
                 moving_up = False
             if event.key == pygame.K_s:
                 moving_down = False
-            if event.key == pygame.K_SPACE:
-                shoot = False
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 slash = False
+                shootShotgun = False
+                shootSniper = False
 
     pygame.display.update()
 
 pygame.quit()
-
-# import pygame
-# from player import player
-
-# # constants
-# WIDTH, HEIGHT = (900, 500)
-# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-# pygame.display.set_caption("Time Crawlers")
-
-# FPS = 60
-
-# WHITE = (255, 255, 255)
-
-# def draw_window(player): # draw and update the window
-#     WIN.fill(WHITE)
-#     WIN.blit(player.image, (player.rect.x, player.rect.y))
-#     for projectile in player.projectiles:
-#         WIN.blit(projectile.image, (projectile.rect.x, projectile.rect.y))
-#         pygame.transform.rotate(projectile.image, projectile.ANGLE)
-#     pygame.display.update()
-
-# def updatePlayerStatus(player):
-#     if player.attackTimer > 0:
-#         player.attackTimer -= 1
-
-# def main(): # main function
-#     clock = pygame.time.Clock()
-#     p = player()
-#     run = True
-
-#     while run:
-#         clock.tick(FPS)
-#         mx, my = pygame.mouse.get_pos()
-#         mouseClicked = pygame.mouse.get_pressed()
-#         if mouseClicked[0]:
-#             p.attack(mx, my)
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 run = False
-
-
-#         p.handle_input()
-#         p.handle_projectiles()
-#         updatePlayerStatus(p)
-#         draw_window(p)
-
-#     pygame.quit()
-
-# if __name__ == "__main__": # call main function
-#     main()
-
