@@ -96,32 +96,45 @@ class Player(pygame.sprite.Sprite):
     def move(self, moving_left, moving_right, moving_up, moving_down, enemy_group):
         #reset movement variables
         dx, dy = 0, 0
+        mx, my = False, False
 
         #assign movement variables if moving left or right
         if moving_left:
             dx = -self.speed
             self.flip = True
             self.direction = -1
-            if pygame.sprite.spritecollideany(self, enemy_group):
-                dx = -dx
+            mx = True
+
         if moving_right:
             dx = self.speed
             self.flip = False
             self.direction = 1
-            if pygame.sprite.spritecollideany(self, enemy_group):
-                dx = -dx
+            mx = True
+
         if moving_up:
             dy = -self.speed
-            if pygame.sprite.spritecollideany(self, enemy_group):
-                dy = -dy
+            my = True
+
         if moving_down:
             dy = self.speed
-            if pygame.sprite.spritecollideany(self, enemy_group):
-                dy = -dy
+            my = True
+
 
         #update rectangle position
+        px = self.rect.x
+        py = self.rect.y
+
         self.rect.x += dx
         self.rect.y += dy
+
+        if pygame.sprite.spritecollideany(self, enemy_group):
+            if mx and my:
+                self.rect.x = px
+                self.rect.y = py
+            if mx:
+                self.rect.x = px
+            if my:
+                self.rect.y = py
 
     def knockback(self, enemy):
         if self.alive and enemy.alive:
